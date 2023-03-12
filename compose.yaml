@@ -42,7 +42,6 @@ services:
       - ./backend:/var/www/html
     environment:
       - DB_HOST=${DB_HOST}
-      - DB_NAME=${DB_NAME}
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

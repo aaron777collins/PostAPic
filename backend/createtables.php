@@ -5,13 +5,16 @@
 
     $servername = getenv("DB_HOST") ? getenv("DB_HOST") : "localhost"; // REPLACE with Database host, usually localhost
 
-    if (getenv("DB_NAME")) {
-        $dbname = getenv("DB_NAME");
+    if (getenv("DB_HOST")) {
+        $servername = getenv("DB_HOST");
+        $dbname = "pap";
+        $dbuser = "pap";
     } else {
-        $dbname = "coll11s_pap";
+        $servername = "localhost";
+        $dbname = "colli11s_pap";
+        $dbuser = "colli11s_pap";
     }
 
-    $dbuser = "pap";
     $dbpass = "secret";
 
     // Create connection
