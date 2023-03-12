@@ -1,0 +1,30 @@
+server {
+    listen 0.0.0.0:80;
+    root /var/www/html;
+
+    location / {
+        set $ORIGIN '*';
+        set $METHODS  'GET, POST, DELETE, OPTIONS, HEAD, PATCH, PUT';
+        set $HEADERS  'Authorization, Origin, X-Requested-With, Content-Type, Accept';
+        add_header 'Access-Control-Allow-Origin' $ORIGIN always;
+        add_header 'Access-Control-Allow-Methods' $METHODS always;
+        add_header 'Access-Control-Allow-Headers' $HEADERS always;
+        add_header 'Access-Control-Allow-Credentials' true always;
+        index index.php index.html;
+    }
+    location ~ \.php$ {
+
+        set $ORIGIN '*';
+        set $METHODS  'GET, POST, DELETE, OPTIONS, HEAD, PATCH, PUT';
+        set $HEADERS  'Authorization, Origin, X-Requested-With, Content-Type, Accept';
+        add_header 'Access-Control-Allow-Origin' $ORIGIN always;
+        add_header 'Access-Control-Allow-Methods' $METHODS always;
+        add_header 'Access-Control-Allow-Headers' $HEADERS always;
+        add_header 'Access-Control-Allow-Credentials' true always;
+
+        include fastcgi_params;
+        fastcgi_pass php:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+    }
+}

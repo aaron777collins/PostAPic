@@ -1,0 +1,81 @@
+version: '3.7'
+services:
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend
+    volumes:
+      - ./frontend:/app
+    environment:
+      WATCHPACK_POLLING: 'true'
+
+  nginx-backend:
+    image: nginx:alpine
+    restart: unless-stopped
+    build:
+      context: ./nginx
+    ports:
+      - "8080:80"
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - php
+      - appdb
+    volumes:
+      - ./backend/:/var/www/html
+      - ./logs/nginx:/var/log/nginx/
+      - ./nginx/conf.d:/etc/nginx/conf.d
+
+  php:
+    image: php:fpm-alpine
+    restart: unless-stopped
+    build:
+      context: ./backend
+    networks:
+      - backend
+    volumes:
+      - ./backend:/var/www/html
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    networks:
+      - frontend
+      - backend
+    environment:
+      PMA_HOST: appdb
+      PMA_PORT: 3306
+      PMA_USER: ${DB_USERNAME}
+      PMA_PASSWORD: ${DB_PASSWORD}
+      PMA_ARBITRARY: 1
+
+  appdb:
+    image: mysql:5.7.22
+    restart: unless-stopped
+    build:
+      context: ./mysql
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+    volumes:
+      # - ./initdb:/docker-entrypoint-initdb.d
+      - ./data/mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
