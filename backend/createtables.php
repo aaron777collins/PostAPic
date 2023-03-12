@@ -8,7 +8,7 @@
     // REPLACE with your Database name
     $dbname = "pap";
 
-    $dbuser = "colli11s";
+    $dbuser = "pap";
     $dbpass = "secret";
 
     // Create connection
