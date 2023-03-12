@@ -40,6 +40,8 @@ services:
       - backend
     volumes:
       - ./backend:/var/www/html
+    environment:
+      - DB_HOST=${DB_HOST}
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

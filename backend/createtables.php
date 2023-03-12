@@ -3,7 +3,7 @@
     // connect to the mysql database and create the users table
     // if it doesn't already exist
 
-    $servername = "appdb:3306";
+    $servername = getenv("DB_HOST") ? getenv("DB_HOST") : "localhost"; // REPLACE with Database host, usually localhost
 
     // REPLACE with your Database name
     $dbname = "pap";
