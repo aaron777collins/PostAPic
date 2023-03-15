@@ -1,3 +1,3 @@
 <?php
-    echo json_encode(array("message" => "Hello World!"));
+    echo json_encode(array("message" => "Hello World! (2)"));
 ?>

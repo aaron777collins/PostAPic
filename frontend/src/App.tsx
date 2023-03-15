@@ -48,7 +48,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React 9
+          Learn React 10
         </a>
         <button onClick={getFromBackend}>Get from backend</button>
         <button onClick={createTables}>Create tables</button>
