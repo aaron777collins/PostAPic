@@ -1,10 +1,30 @@
 import { createTheme } from "@mui/material";
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Admin from "./Admin/Admin";
 import "./App.css";
+import Create from "./Create/Create";
+import Home from "./Home/Home";
+import Loading from "./Loading/Loading";
+import Login from "./Login/Login";
 import Navigationbar from "./Navbar/Navigationbar";
+import NoPage from "./NoPage/NoPage";
+import Profile from "./Profile/Profile";
+import Register from "./Register/Register";
+import Search from "./Search/Search";
+import { UserType } from "./Types/UserType";
 
 function App() {
   const urlExtension = getProcessExtension();
+
+  const [user, setUser] = React.useState({
+    id: "",
+    username: "",
+    firstName: "",
+    lastName: "",
+  } as UserType);
+
+  const [loading, setLoading] = React.useState(false);
 
   // Home
   // Search
@@ -16,20 +36,21 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Navigationbar urlExtension={urlExtension} />
+        <Navigationbar urlExtension={urlExtension} user={user} />
+        <Loading loading={loading} />
         <Routes>
-          <Route path={urlExtension + "/"} element={<h1>Home</h1>} />
-          <Route path={urlExtension + "/home"} element={<h1>Home</h1>} />
-          <Route path={urlExtension + "/search"} element={<h1>Search</h1>} />
-          <Route path={urlExtension + "/create"} element={<h1>Create</h1>} />
-          <Route path={urlExtension + "/admin"} element={<h1>Admin</h1>} />
-          <Route path={urlExtension + "/profile"} element={<h1>Profile</h1>} />
-          <Route path={urlExtension + "/login"} element={<h1>Login</h1>} />
+          <Route path={urlExtension + "/"} element={<Home/>} />
+          <Route path={urlExtension + "/home"} element={<Home/>} />
+          <Route path={urlExtension + "/search"} element={<Search/>} />
+          <Route path={urlExtension + "/create"} element={<Create/>} />
+          <Route path={urlExtension + "/admin"} element={<Admin/>} />
+          <Route path={urlExtension + "/profile"} element={<Profile/>} />
+          <Route path={urlExtension + "/login"} element={<Login setLoading={setLoading}/>} />
           <Route
             path={urlExtension + "/register"}
-            element={<h1>Register</h1>}
+            element={<Register/>}
           />
-          <Route path="*" element={<h1>404</h1>} />
+          <Route path="*" element={<NoPage/>} />
         </Routes>
       </BrowserRouter>
     </div>

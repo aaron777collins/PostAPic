@@ -17,6 +17,8 @@ import AdbIcon from "@mui/icons-material/Adb";
 import { Link } from "react-router-dom";
 import Icon from "@mui/material/Icon";
 import Logo from "../Logo/Logo";
+import { UserType } from "../Types/UserType";
+import IconButtonOrLoginButton from "./IconButtonOrLoginButton/IconButtonOrLoginButton";
 
 // Home
 // Search
@@ -37,7 +39,8 @@ const pagesWithLinks = ["Home", "Search", "Create"];
 const settingsPages = ["Profile", "Logout"];
 
 interface NavigationbarProps {
-    urlExtension: string;
+  urlExtension: string;
+  user: UserType;
 }
 
 function Navigationbar(props: NavigationbarProps) {
@@ -64,11 +67,11 @@ function Navigationbar(props: NavigationbarProps) {
   };
 
   return (
-    <AppBar position="static" sx={{backgroundColor: "#25283D"}}>
+    <AppBar position="static" sx={{ backgroundColor: "#25283D" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <div className="logocontainer">
-            <Logo width={50} height={50}/>
+            <Logo width={50} height={50} />
           </div>
           <Typography
             variant="h6"
@@ -150,9 +153,10 @@ function Navigationbar(props: NavigationbarProps) {
               <Button
                 key={page}
                 onClick={() => {
-                    // go to page
-                    document.location.href = props.urlExtension + "/" + page.toLowerCase();
-                    handleCloseNavMenu();
+                  // go to page
+                  document.location.href =
+                    props.urlExtension + "/" + page.toLowerCase();
+                  handleCloseNavMenu();
                 }}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
@@ -160,40 +164,16 @@ function Navigationbar(props: NavigationbarProps) {
               </Button>
             ))}
           </Box>
-
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={"Aaron"} src="1234" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              <div className="settingsmenu">
-                {settingsPages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseUserMenu}>
-                  <Link to={props.urlExtension + "/" + page.toLowerCase()} style={{textDecoration: 'none'}}>
-                    <Typography textAlign="center">{page}</Typography>
-                  </Link>
-                </MenuItem>
-                    ))}
-              </div>
-            </Menu>
-          </Box>
+          <div>
+            <IconButtonOrLoginButton
+              handleOpenUserMenu={handleOpenUserMenu}
+              handleCloseUserMenu={handleCloseUserMenu}
+              anchorElUser={anchorElUser}
+              user={props.user}
+              urlExtension={props.urlExtension}
+              settingsPages={settingsPages}
+            />
+          </div>
         </Toolbar>
       </Container>
     </AppBar>
