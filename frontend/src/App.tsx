@@ -1,60 +1,46 @@
-import React from "react";
-import logo from "./logo.svg";
+import { createTheme } from "@mui/material";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
-
-function getFromBackend() {
-  fetch("http://localhost:8080/test.php")
-    .then(function (response) {
-      // The API call was successful!
-      return response.json();
-    })
-    .then(function (data) {
-      // This is the JSON from our response
-      console.log(data);
-    })
-    .catch(function (err) {
-      // There was an error
-      console.warn("Something went wrong.", err);
-    });
-}
-
-function createTables() {
-  fetch("http://localhost:8080/createtables.php")
-    .then(function (response) {
-      // The API call was successful!
-      return response.json();
-    })
-    .then(function (data) {
-      // This is the JSON from our response
-      console.log(data);
-    })
-    .catch(function (err) {
-      // There was an error
-      console.warn("Something went wrong.", err);
-    });
-}
+import Navigationbar from "./Navbar/Navigationbar";
 
 function App() {
+  const urlExtension = getProcessExtension();
+
+  // Home
+  // Search
+  // Create
+  // Admin
+  // Profile
+  // Login
+  // Register
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React 10
-        </a>
-        <button onClick={getFromBackend}>Get from backend</button>
-        <button onClick={createTables}>Create tables</button>
-      </header>
+      <BrowserRouter>
+        <Navigationbar urlExtension={urlExtension} />
+        <Routes>
+          <Route path={urlExtension + "/"} element={<h1>Home</h1>} />
+          <Route path={urlExtension + "/home"} element={<h1>Home</h1>} />
+          <Route path={urlExtension + "/search"} element={<h1>Search</h1>} />
+          <Route path={urlExtension + "/create"} element={<h1>Create</h1>} />
+          <Route path={urlExtension + "/admin"} element={<h1>Admin</h1>} />
+          <Route path={urlExtension + "/profile"} element={<h1>Profile</h1>} />
+          <Route path={urlExtension + "/login"} element={<h1>Login</h1>} />
+          <Route
+            path={urlExtension + "/register"}
+            element={<h1>Register</h1>}
+          />
+          <Route path="*" element={<h1>404</h1>} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
 
 export default App;
+function getProcessExtension(): string {
+  if (process.env.REACT_APP_DEV === "true") {
+    return "";
+  } else {
+    return "/COMP-2707-W23/project/frontend/build";
+  }
+}
