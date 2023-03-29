@@ -68,13 +68,17 @@
     FOREIGN KEY (otheruserid) REFERENCES users(id)
     )";
 
+    // add admin account with username: admin, password: admin
+    $sql6 = "INSERT INTO users (username, firstname, lastname, password, email) VALUES ('admin', 'admin', 'admin', 'admin', 'admin@example.com')";
+
     // executing sql query
     $result1 = mysqli_query($conn, $sql1);
     $result2 = mysqli_query($conn, $sql2);
     $result3 = mysqli_query($conn, $sql3);
     $result4 = mysqli_query($conn, $sql4);
     $result5 = mysqli_query($conn, $sql5);
+    $result6 = mysqli_query($conn, $sql6);
 
     // sends result back in JSON format
-    echo json_encode(array("results" => array($result1, $result2, $result3, $result4, $result5)));
+    echo json_encode(array("results" => array($result1, $result2, $result3, $result4, $result5, $result6)));
 ?>
