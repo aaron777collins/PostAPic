@@ -140,7 +140,7 @@ export default function Login(props: ILoginProps) {
           {/* Link to register page */}
           <Typography>
             Don't have an account?{" "}
-            <Link href="/register" underline="hover">
+            <Link href={props.urlExtension + "/register"} underline="hover">
               Register
             </Link>
           </Typography>
@@ -148,7 +148,7 @@ export default function Login(props: ILoginProps) {
           {/* Link to search page */}
           <Typography>
             Continue as guest?{" "}
-            <Link href="/home" underline="hover">
+            <Link href={props.urlExtension + "/home"} underline="hover">
               Home
             </Link>
           </Typography>
