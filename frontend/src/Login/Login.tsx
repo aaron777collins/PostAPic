@@ -9,10 +9,8 @@ import {
 } from "@mui/material";
 import "./Login.css";
 import { styled } from "@mui/system";
-
-export interface ILoginProps {
-    setLoading: (loading: boolean) => void;
-}
+import API from "../API";
+import { UserType } from "../Types/UserType";
 
 const ContainerStyled = styled(Container)(({ theme }) => ({
   display: "flex",
@@ -26,39 +24,89 @@ const PaperStyled = styled(Paper)(({ theme }) => ({
   padding: "4em",
 }));
 
-const FormStyled = styled('form')(({ theme }) => ({
+const FormStyled = styled("form")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: "1em",
 }));
 
 const ButtonStyled = styled(Button)(({ theme }) => ({
-    backgroundColor: "#25283D",
-    color: "white",
+  backgroundColor: "#25283D",
+  color: "white",
   alignSelf: "flex-start",
 }));
 
+export interface ILoginProps {
+  setLoading: (loading: boolean) => void;
+  apiURL: string;
+  urlExtension: string;
+  setUser: React.Dispatch<React.SetStateAction<UserType>>;
+}
+
 export default function Login(props: ILoginProps) {
-    const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const form = event.currentTarget;
-        const formData = new FormData(form);
-        const username = formData.get("username");
-        const password = formData.get("password");
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const username = formData.get("username");
+    const password = formData.get("password");
 
-        props.setLoading(true);
+    props.setLoading(true);
 
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+    // sending post with username and password properties
+    await API.POST(
+      {
+        username: username,
+        password: password,
+      },
+      props.apiURL + "/login.php",
+      (data: any, req: XMLHttpRequest) => {
+        // successful response
+
+        // checking if the response has "error" property
+        if ((!data || data.includes("<br />")) ) {
+            // show error message
+            console.error("Login failed");
+            console.error(data);
+        } else {
+
+            // login successful
+            // set user info in session storage
+            const jsonData = JSON.parse(data);
+            // console.log(jsonData);
+            const remappeddata = {
+              id: jsonData.id,
+              firstName: jsonData.firstName,
+              lastName: jsonData.lastName,
+              email: jsonData.email,
+              username: jsonData.username,
+              token: jsonData.token,
+          } as UserType
+          // console.log(remappeddata)
+            sessionStorage.setItem("userinfo", JSON.stringify(remappeddata));
+            props.setUser(remappeddata);
+
+            // redirect to home page
+            document.location.href = props.urlExtension + "/home";
+
+        }
 
         props.setLoading(false);
 
-        console.log(username, password)
+      },
+      (data: any, req: XMLHttpRequest) => {
+        // error
+        console.error("Login failed");
+        console.error(data);
+        props.setLoading(false);
+      }
+    );
 
-    }
+  };
   return (
     <ContainerStyled maxWidth="xs">
       <PaperStyled elevation={3}>
-        <Typography variant="h4" align="center" sx={{paddingBottom: "10px"}}>
+        <Typography variant="h4" align="center" sx={{ paddingBottom: "10px" }}>
           Login
         </Typography>
         <FormStyled
@@ -100,8 +148,8 @@ export default function Login(props: ILoginProps) {
           {/* Link to search page */}
           <Typography>
             Continue as guest?{" "}
-            <Link href="/search" underline="hover">
-              Search
+            <Link href="/home" underline="hover">
+              Home
             </Link>
           </Typography>
         </FormStyled>

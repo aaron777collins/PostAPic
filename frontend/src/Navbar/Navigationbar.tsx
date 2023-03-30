@@ -41,6 +41,7 @@ const settingsPages = ["Profile", "Logout"];
 interface NavigationbarProps {
   urlExtension: string;
   user: UserType;
+  setUser: React.Dispatch<React.SetStateAction<UserType>>;
 }
 
 function Navigationbar(props: NavigationbarProps) {
@@ -123,9 +124,24 @@ function Navigationbar(props: NavigationbarProps) {
               {pagesWithLinks.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   {/* link to corresponding page*/}
-                  <Link to={props.urlExtension + "/" + page.toLowerCase()}>
-                    <Typography textAlign="center">{page}</Typography>
-                  </Link>
+                  <Button
+                      onClick={() => {
+                        props.setUser({
+                          id: "",
+                          firstName: "",
+                          lastName: "",
+                          email: "",
+                          username: "",
+                          token: "",
+                        } as UserType);
+                        sessionStorage.removeItem("userinfo");
+                      }}
+                      component={Link}
+                      to={props.urlExtension + "/" + page.toLowerCase()}
+                      sx={{textTransform: "none"}}
+                      >
+                      {page}
+                    </Button>
                 </MenuItem>
               ))}
             </Menu>
@@ -170,6 +186,7 @@ function Navigationbar(props: NavigationbarProps) {
               handleCloseUserMenu={handleCloseUserMenu}
               anchorElUser={anchorElUser}
               user={props.user}
+              setUser={props.setUser}
               urlExtension={props.urlExtension}
               settingsPages={settingsPages}
             />
