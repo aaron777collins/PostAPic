@@ -92,7 +92,7 @@ export default function IconButtonOrLoginButton(
         >
           <div className="settingsmenu">
             {props.settingsPages.map((page) => {
-              if (page === "Logout") {
+              if (page.toLowerCase() === "Logout".toLowerCase()) {
                 return (
                   <MenuItem key={page} onClick={props.handleCloseUserMenu}>
                     {/* button with function call that looks like a link*/}
@@ -121,17 +121,6 @@ export default function IconButtonOrLoginButton(
                 return (
                   <MenuItem key={page} onClick={props.handleCloseUserMenu}>
                   <Button
-                      onClick={() => {
-                        props.setUser({
-                          id: "",
-                          firstName: "",
-                          lastName: "",
-                          email: "",
-                          username: "",
-                          token: "",
-                        } as UserType);
-                        sessionStorage.removeItem("userinfo");
-                      }}
                       component={Link}
                       to={props.urlExtension + "/" + page.toLowerCase()}
                       sx={{textTransform: "none"}}
