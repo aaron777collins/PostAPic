@@ -64,6 +64,8 @@
         $token = uniqid();
         // store in session
         $_SESSION["token"] = $token;
+        // store username
+        $_SESSION["username"] = $username;
 
         // return the user info as JSON
         $row = $result->fetch_assoc();
