@@ -47,7 +47,11 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Navigationbar urlExtension={urlExtension} user={user} setUser={setUser} />
+        <Navigationbar
+          urlExtension={urlExtension}
+          user={user}
+          setUser={setUser}
+        />
         <Loading loading={loading} />
         <Routes>
           <Route path={urlExtension + "/"} element={<Home />} />
@@ -67,7 +71,17 @@ function App() {
               />
             }
           />
-          <Route path={urlExtension + "/register"} element={<Register />} />
+          <Route
+            path={urlExtension + "/register"}
+            element={
+              <Register
+                setLoading={setLoading}
+                apiURL={apiURL}
+                urlExtension={urlExtension}
+                setUser={setUser}
+              />
+            }
+          />
           <Route path="*" element={<NoPage />} />
         </Routes>
       </BrowserRouter>

@@ -11,6 +11,11 @@ import "./Login.css";
 import { styled } from "@mui/system";
 import API from "../API";
 import { UserType } from "../Types/UserType";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+
 
 const ContainerStyled = styled(Container)(({ theme }) => ({
   display: "flex",
@@ -44,12 +49,33 @@ export interface ILoginProps {
 }
 
 export default function Login(props: ILoginProps) {
-  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const username = formData.get("username");
-    const password = formData.get("password");
+  type loginSubmitForm = {
+    username: string;
+    password: string;
+  };
+
+  const validationSchema = yup.object().shape({
+    username: yup.string().required("Username is required"),
+    password: yup.string().required("Password is required"),
+  });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<loginSubmitForm>({
+    resolver: yupResolver(validationSchema),
+  });
+
+  const onSubmit = async (formData: loginSubmitForm) => {
+
+    const username = formData["username"]
+    const password = formData["password"]
+
+    if(!username || !password) {
+        console.error("Username or password is empty");
+        return;
+    }
 
     props.setLoading(true);
 
@@ -113,29 +139,42 @@ export default function Login(props: ILoginProps) {
           sx={{
             "& > :not(style)": { m: 1, width: "25ch" },
           }}
-          noValidate
           autoComplete="off"
-          onSubmit={handleLogin}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <TextField
             label="Username"
             type="username"
             id="username"
-            name="username"
             variant="outlined"
             fullWidth
-          />
+            required
+            {...register("username")}
+            />
+            {errors.username?.message && (
+              <div className="invalid-feedback">{errors.username?.message}</div>
+            )}
           <TextField
             label="Password"
             type="password"
             id="password"
-            name="password"
             variant="outlined"
+            required
             fullWidth
+            {...register("password")}
           />
           <ButtonStyled type="submit" variant="contained" color="primary">
             Login
           </ButtonStyled>
+          <ButtonStyled
+            type="reset"
+            variant="contained"
+            color="secondary"
+            onClick={() => reset()}
+          >
+            Reset
+          </ButtonStyled>
+
 
           {/* Link to register page */}
           <Typography>
