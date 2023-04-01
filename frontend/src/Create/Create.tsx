@@ -49,7 +49,7 @@ const validationSchema = yup.object().shape({
       if (!value) return false;
       const file = Array.from(value as FileList)[0];
       const fileSize = file.size;
-      const validImageSize = 1000000;
+      const validImageSize = 4294967290;
       return fileSize < validImageSize;
     }),
 });
