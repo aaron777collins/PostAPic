@@ -1,6 +1,6 @@
 <?php
 
-    // check that the username and password match. If so, issue them a session token and return the info
+    // check that the username and password match. If so, issue them a token and return the info
 
     $servername = getenv("DB_HOST") ? getenv("DB_HOST") : "localhost"; // REPLACE with Database host, usually localhost
 
@@ -75,10 +75,6 @@
         // username found, password matches
         // issue a session token
         $token = uniqid();
-        // store in session
-        $_SESSION["token"] = $token;
-        // store username
-        $_SESSION["username"] = $username;
 
         // store token in database
         // matches this table:

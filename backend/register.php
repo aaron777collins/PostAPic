@@ -1,6 +1,5 @@
 <?php
 
-    // check that the username and password match. If so, issue them a session token and return the info
 
     $servername = getenv("DB_HOST") ? getenv("DB_HOST") : "localhost"; // REPLACE with Database host, usually localhost
 

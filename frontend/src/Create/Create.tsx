@@ -24,6 +24,7 @@ interface ICreateProps {
   setLoading: (loading: boolean) => void;
   apiURL: string;
   user: UserType;
+  setUser: React.Dispatch<React.SetStateAction<UserType>>;
 }
 
 interface IFormInputs {
@@ -100,12 +101,31 @@ export default function Create(props: ICreateProps) {
     reader.onload = async () => {
       const imageRes = reader.result;
 
+      console.log(imageRes);
+
       if (!imageRes) {
         console.error("imageRes is null");
         setSnackbarErrorMessage(
           "Post creation failed: Please upload a valid image file (JPEG, JPG, PNG). The current file couldn't be read"
         );
         setSnackbarErrorOpen(true);
+        return;
+      }
+
+      if (props.user.tokenExpiration < Date.now()) {
+        setSnackbarErrorMessage(
+          "Post creation failed: Your token has expired. Please log in again."
+        );
+        setSnackbarErrorOpen(true);
+        props.setUser({
+          id: "",
+          firstName: "",
+          lastName: "",
+          email: "",
+          username: "",
+          token: "",
+          tokenExpiration: 0,
+        } as UserType);
         return;
       }
 
@@ -146,7 +166,7 @@ export default function Create(props: ICreateProps) {
             setSnackbarErrorOpen(true);
           } else {
             // login successful
-            // set user info in session storage
+            // set user info in local storage
             const jsonData = JSON.parse(data);
             // console.log(jsonData);
             const remappeddata = {
@@ -159,8 +179,8 @@ export default function Create(props: ICreateProps) {
             } as PostType;
 
             props.setLoading(false);
-            console.log(jsonData)
-            console.log(jsonData["image"])
+            console.log(jsonData);
+            console.log(jsonData["image"]);
             console.log(JSON.stringify(remappeddata));
 
             // Handle submission logic here (e.g. call API to store data in the database)

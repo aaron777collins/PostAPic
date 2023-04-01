@@ -125,17 +125,6 @@ function Navigationbar(props: NavigationbarProps) {
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   {/* link to corresponding page*/}
                   <Button
-                      onClick={() => {
-                        props.setUser({
-                          id: "",
-                          firstName: "",
-                          lastName: "",
-                          email: "",
-                          username: "",
-                          token: "",
-                        } as UserType);
-                        sessionStorage.removeItem("userinfo");
-                      }}
                       component={Link}
                       to={props.urlExtension + "/" + page.toLowerCase()}
                       sx={{textTransform: "none"}}

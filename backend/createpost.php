@@ -1,6 +1,5 @@
 <?php
 
-    // check that the username and password match. If so, issue them a session token and return the info
 
     $servername = getenv("DB_HOST") ? getenv("DB_HOST") : "localhost"; // REPLACE with Database host, usually localhost
 
@@ -40,6 +39,10 @@
 
     // Remove the data:image/jpeg;base64, part from the base64 string
     $base64Image = substr($image, strpos($image, ",") + 1);
+
+    // $base64Image = base64_encode($base64Image);
+
+    // $base64Image = $image;
 
     // check that all the fields are filled in
     if ($title == "" || $description == "" || $base64Image == "" || $imagetype == "") {
@@ -103,11 +106,12 @@
         $response = array(
             "success" => array(
                 "id" => $conn->insert_id,
+                "userid" => $userid,
                 "title" => $title,
                 "description" => $description,
-                "image" => $image, // Use imageData here to return the base64 encoded image
+                "image" => $base64Image, // Use imageData here to return the base64 encoded image
                 "imagetype" => $imagetype,
-                "createdAt" => date("Y-m-d H:i:s"))
+                "post_date" => date("Y-m-d H:i:s"))
         );
         echo json_encode($response);
         return;

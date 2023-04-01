@@ -4,4 +4,5 @@ export interface UserType {
   firstName: string;
   lastName: string;
   token: string;
+  tokenExpiration: number;
 }

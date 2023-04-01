@@ -119,9 +119,11 @@ export default function Login(props: ILoginProps) {
           setSnackbarErrorOpen(true);
         } else {
           // login successful
-          // set user info in session storage
+          // set user info in local storage
           const jsonData = JSON.parse(data);
           // console.log(jsonData);
+          // 30 minutes to milliseconds
+          const tokenExpiration = Date.now() + 30 * 60 * 1000;
           const remappeddata = {
             id: jsonData.id,
             firstName: jsonData.firstName,
@@ -129,9 +131,11 @@ export default function Login(props: ILoginProps) {
             email: jsonData.email,
             username: jsonData.username,
             token: jsonData.token,
+            tokenExpiration: tokenExpiration
           } as UserType;
-          // console.log(remappeddata)
-          sessionStorage.setItem("userinfo", JSON.stringify(remappeddata));
+          console.log("Set to:");
+          console.log(remappeddata);
+          localStorage.setItem("userinfo", JSON.stringify(remappeddata));
           props.setUser(remappeddata);
 
           setSnackbarSuccessMessage(

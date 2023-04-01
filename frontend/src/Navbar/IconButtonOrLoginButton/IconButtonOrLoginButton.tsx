@@ -105,8 +105,9 @@ export default function IconButtonOrLoginButton(
                           email: "",
                           username: "",
                           token: "",
+                          tokenExpiration: 0,
                         } as UserType);
-                        sessionStorage.removeItem("userinfo");
+                        localStorage.removeItem("userinfo");
                       }}
                       component={Link}
                       to={props.urlExtension + "/"}
@@ -132,12 +133,6 @@ export default function IconButtonOrLoginButton(
             }})}
           </div>
 
-          {/* const logoutAndRedirect = () => {
-        props.setUser({id: "", firstName: "", lastName: "", email: "", username: "", token: ""} as UserType);
-        sessionStorage.removeItem("userinfo");
-        document.location.href = props.urlExtension + "/";
-        return (<h1>Redirecting...</h1>);
-    } */}
         </Menu>
       </Box>
     );

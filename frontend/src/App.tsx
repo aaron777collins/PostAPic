@@ -25,11 +25,13 @@ function App() {
     lastName: "",
     email: "",
     token: "",
+    tokenExpiration: 0,
   } as UserType);
 
   React.useEffect(() => {
-    const user = sessionStorage.getItem("userinfo");
+    const user = localStorage.getItem("userinfo");
     if (user) {
+      console.log(user);
       setUser(JSON.parse(user));
     }
     console.log(user);
@@ -54,10 +56,10 @@ function App() {
         />
         <Loading loading={loading} />
         <Routes>
-          <Route path={urlExtension + "/"} element={<Home />} />
-          <Route path={urlExtension + "/home"} element={<Home />} />
+          <Route path={urlExtension + "/"} element={<Home setLoading={setLoading} apiURL={apiURL}/>} />
+          <Route path={urlExtension + "/home"} element={<Home setLoading={setLoading} apiURL={apiURL}/>} />
           <Route path={urlExtension + "/search"} element={<Search />} />
-          <Route path={urlExtension + "/create"} element={<Create urlExtension={urlExtension} setLoading={setLoading} apiURL={apiURL} user={user}/>} />
+          <Route path={urlExtension + "/create"} element={<Create urlExtension={urlExtension} setLoading={setLoading} apiURL={apiURL} user={user} setUser={setUser}/>} />
           <Route path={urlExtension + "/admin"} element={<Admin />} />
           <Route path={urlExtension + "/profile"} element={<Profile />} />
           <Route
