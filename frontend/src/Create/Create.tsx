@@ -44,12 +44,14 @@ const validationSchema = yup.object().shape({
       const fileType = file.type;
       const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
       return validImageTypes.includes(fileType);
-    }).test("fileSize", "File size is too large", (value) => {
+    })
+    .test("fileSize", "File size is too large", (value) => {
       if (!value) return false;
       const file = Array.from(value as FileList)[0];
       const fileSize = file.size;
       const validImageSize = 1000000;
-      return fileSize < validImageSize;}),
+      return fileSize < validImageSize;
+    }),
 });
 
 export default function Create(props: ICreateProps) {
@@ -70,7 +72,7 @@ export default function Create(props: ICreateProps) {
       image: undefined,
     });
     setImageName("");
-  }
+  };
 
   const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
   const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState("");
@@ -85,114 +87,132 @@ export default function Create(props: ICreateProps) {
     setSnackbarErrorOpen(false);
   };
 
-
-
   const [imageName, setImageName] = useState("");
 
   const onSubmit = async (data: IFormInputs) => {
     // making a xmlhttprequest to the backend to create a post
     props.setLoading(true);
 
-    const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("description", data.description);
-    formData.append("image", Array.from(data.image)[0]);
-    formData.append("imagetype", Array.from(data.image)[0].type);
-    formData.append("token", props.user["token"]);
+    const file = Array.from(data.image)[0];
+    const reader = new FileReader();
 
-    await API.POST(
-      formData,
-      props.apiURL + "/createpost.php",
-      (data: any, req: XMLHttpRequest) => {
-        // successful response
+    reader.readAsDataURL(file);
+    reader.onload = async () => {
+      const imageRes = reader.result;
 
-        // checking if the response has "error" property
-        if (!data || data.includes("<br />" || data.includes("error"))) {
-          // show error message
-          console.error("Creation failed");
-          console.error(data);
-          if (data.includes("upload")) {
-            setSnackbarErrorMessage(
-              "Post creation failed: Please upload a valid image file (JPEG, JPG, PNG)."
-            );
-          } else if (data.includes("fill in")) {
-            setSnackbarErrorMessage(
-              "Post creation failed: Please fill in all the fields."
-            );
-          } else if (data.includes("log in")) {
-            setSnackbarErrorMessage(
-              "Post creation failed: Please log in to create a post."
-            );
+      if (!imageRes) {
+        console.error("imageRes is null");
+        setSnackbarErrorMessage(
+          "Post creation failed: Please upload a valid image file (JPEG, JPG, PNG). The current file couldn't be read"
+        );
+        setSnackbarErrorOpen(true);
+        return;
+      }
+
+      await API.POST(
+        {
+          title: data.title,
+          description: data.description,
+          image: imageRes,
+          imagetype: file.type,
+          token: props.user.token,
+        },
+        props.apiURL + "/createpost.php",
+        (data: any, req: XMLHttpRequest) => {
+          // successful response
+
+          // checking if the response has "error" property
+          if (!data || data.includes("<br />" || data.includes("error"))) {
+            // show error message
+            console.error("Creation failed");
+            console.error(data);
+            if (data.includes("upload")) {
+              setSnackbarErrorMessage(
+                "Post creation failed: Please upload a valid image file (JPEG, JPG, PNG)."
+              );
+            } else if (data.includes("fill in")) {
+              setSnackbarErrorMessage(
+                "Post creation failed: Please fill in all the fields."
+              );
+            } else if (data.includes("log in")) {
+              setSnackbarErrorMessage(
+                "Post creation failed: Please log in to create a post."
+              );
+            } else {
+              setSnackbarErrorMessage(
+                "Post creation failed. Please try again later."
+              );
+            }
+            setSnackbarErrorOpen(true);
           } else {
-            setSnackbarErrorMessage(
-              "Post creation failed. Please try again later."
+            // login successful
+            // set user info in session storage
+            const jsonData = JSON.parse(data);
+            // console.log(jsonData);
+            const remappeddata = {
+              id: jsonData.id,
+              title: jsonData.title,
+              description: jsonData.description,
+              image: jsonData.image,
+              imagetype: jsonData.imagetype,
+              createdAt: jsonData.createdAt,
+            } as PostType;
+
+            props.setLoading(false);
+            console.log(jsonData)
+            console.log(jsonData["image"])
+            console.log(JSON.stringify(remappeddata));
+
+            // Handle submission logic here (e.g. call API to store data in the database)
+            setSnackbarSuccessMessage(
+              "Post created successfully. Redirecting to the home page in 3 seconds.."
             );
+            setSnackbarSuccessOpen(true);
+            setTimeout(() => {
+              // window.location.href = props.urlExtension + "/home";
+            }, 3000);
+            // Reset form
+            properReset();
           }
-          setSnackbarErrorOpen(true);
-        } else {
-          // login successful
-          // set user info in session storage
-          const jsonData = JSON.parse(data);
-          // console.log(jsonData);
-          const remappeddata = {
-            id: jsonData.id,
-            title: jsonData.title,
-            description: jsonData.description,
-            image: jsonData.image,
-            imagetype: jsonData.imagetype,
-            createdAt: jsonData.createdAt,
-          } as PostType;
 
           props.setLoading(false);
-          console.log(JSON.stringify(remappeddata));
-
+        },
+        (data: any, req: XMLHttpRequest) => {
+          // error
+          console.error("Login failed");
+          console.error(data);
           // Handle submission logic here (e.g. call API to store data in the database)
-          setSnackbarSuccessMessage(
-            "Post created successfully. Redirecting to the home page in 3 seconds.."
-          );
-          setSnackbarSuccessOpen(true);
-          setTimeout(() => {
-            window.location.href = props.urlExtension + "/home";
+          if (data) {
+            if (data.includes("upload")) {
+              setSnackbarErrorMessage(
+                "Post creation failed: Please upload a valid image file (JPEG, JPG, PNG)."
+              );
+            } else if (data.includes("fill in")) {
+              setSnackbarErrorMessage(
+                "Post creation failed: Please fill in all the fields."
+              );
+            } else if (data.includes("log in")) {
+              setSnackbarErrorMessage(
+                "Post creation failed: Please log in to create a post."
+              );
+            } else {
+              setSnackbarErrorMessage(
+                "Post creation failed. Please try again later."
+              );
+            }
           }
-          , 3000);
-          // Reset form
-          properReset()
+          props.setLoading(false);
+          console.error(data);
+          setSnackbarErrorOpen(true);
         }
-
-        props.setLoading(false);
-      },
-      (data: any, req: XMLHttpRequest) => {
-        // error
-        console.error("Login failed");
-        console.error(data);
-        // Handle submission logic here (e.g. call API to store data in the database)
-        if (data) {
-          if (data.includes("upload")) {
-            setSnackbarErrorMessage(
-              "Post creation failed: Please upload a valid image file (JPEG, JPG, PNG)."
-            );
-          } else if (data.includes("fill in")) {
-            setSnackbarErrorMessage(
-              "Post creation failed: Please fill in all the fields."
-            );
-          } else if (data.includes("log in")) {
-            setSnackbarErrorMessage(
-              "Post creation failed: Please log in to create a post."
-            );
-          } else {
-            setSnackbarErrorMessage(
-              "Post creation failed. Please try again later."
-            );
-          }
-        }
-        props.setLoading(false);
-        console.error(data);
-        setSnackbarErrorOpen(true);
-      }
-    );
-
+      );
+    };
+    reader.onerror = (error) => {
+      console.error(error);
+      setSnackbarErrorMessage("Post creation failed: Error reading the file.");
+      setSnackbarErrorOpen(true);
+    };
   };
-
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -265,7 +285,12 @@ export default function Create(props: ICreateProps) {
         <Button type="submit" variant="contained" color="primary">
           Create
         </Button>
-        <Button type="reset" variant="contained" color="secondary" onClick={properReset}>
+        <Button
+          type="reset"
+          variant="contained"
+          color="secondary"
+          onClick={properReset}
+        >
           Reset
         </Button>
         {imageName && ( // Add this block to display the image name

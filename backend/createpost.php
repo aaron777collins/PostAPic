@@ -30,6 +30,7 @@
 
     $data = json_decode($_POST["data"], false);
 
+
     $title = $data->title;
     $description = $data->description;
     $image = $data->image;
@@ -37,8 +38,11 @@
     $token = $data->token;
 
 
+    // Remove the data:image/jpeg;base64, part from the base64 string
+    $base64Image = substr($image, strpos($image, ",") + 1);
+
     // check that all the fields are filled in
-    if ($title == "" || $description == "" || $image == "" || $imagetype == "") {
+    if ($title == "" || $description == "" || $base64Image == "" || $imagetype == "") {
         $response = array(
             "error" => "Please fill in all fields"
         );
@@ -53,6 +57,7 @@
         echo json_encode($response);
         return;
     }
+
 
     // CREATE TABLE IF NOT EXISTS posts (
     // id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -87,9 +92,8 @@
         return;
     }
 
-
     // store in db
-    $sql = "INSERT INTO posts (userid, title, description, image, imagetype) VALUES ($userid, '$title', '$description', '$image', '$imagetype')";
+    $sql = "INSERT INTO posts (userid, title, description, image, imagetype) VALUES ($userid, '$title', '$description', '$base64Image', '$imagetype')";
 
     // execute
     $result2 = $conn->query($sql);
@@ -101,7 +105,7 @@
                 "id" => $conn->insert_id,
                 "title" => $title,
                 "description" => $description,
-                "image" => $image,
+                "image" => $image, // Use imageData here to return the base64 encoded image
                 "imagetype" => $imagetype,
                 "createdAt" => date("Y-m-d H:i:s"))
         );
