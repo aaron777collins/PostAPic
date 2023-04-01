@@ -14,8 +14,8 @@ import { UserType } from "../Types/UserType";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
-
+import SuccessAndFailureSnackbar from "../CustomSnackbar/SuccessAndFailureSnackbar";
+import { useState } from "react";
 
 const ContainerStyled = styled(Container)(({ theme }) => ({
   display: "flex",
@@ -49,6 +49,19 @@ export interface ILoginProps {
 }
 
 export default function Login(props: ILoginProps) {
+  const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+  const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState("");
+  const [snackbarErrorOpen, setSnackbarErrorOpen] = useState(false);
+  const [snackbarErrorMessage, setSnackbarErrorMessage] = useState("");
+
+  const handleSnackbarSuccessClose = () => {
+    setSnackbarSuccessOpen(false);
+  };
+
+  const handleSnackbarErrorClose = () => {
+    setSnackbarErrorOpen(false);
+  };
+
   type loginSubmitForm = {
     username: string;
     password: string;
@@ -68,13 +81,12 @@ export default function Login(props: ILoginProps) {
   });
 
   const onSubmit = async (formData: loginSubmitForm) => {
+    const username = formData["username"];
+    const password = formData["password"];
 
-    const username = formData["username"]
-    const password = formData["password"]
-
-    if(!username || !password) {
-        console.error("Username or password is empty");
-        return;
+    if (!username || !password) {
+      console.error("Username or password is empty");
+      return;
     }
 
     props.setLoading(true);
@@ -90,44 +102,62 @@ export default function Login(props: ILoginProps) {
         // successful response
 
         // checking if the response has "error" property
-        if ((!data || data.includes("<br />")) ) {
-            // show error message
-            console.error("Login failed");
-            console.error(data);
+        if (!data || data.includes("<br />") || data.includes("error")) {
+          // show error message
+          console.error("Login failed");
+          console.error(data);
+          props.setLoading(false);
+          if (data.includes("incorrect")) {
+            setSnackbarErrorMessage("Login failed: Incorrect username or password");
+            setSnackbarErrorOpen(true);
+            return;
+          } else {
+            setSnackbarErrorMessage(
+              "Login failed. Please try again later."
+            );
+          }
+          setSnackbarErrorOpen(true);
         } else {
-
-            // login successful
-            // set user info in session storage
-            const jsonData = JSON.parse(data);
-            // console.log(jsonData);
-            const remappeddata = {
-              id: jsonData.id,
-              firstName: jsonData.firstName,
-              lastName: jsonData.lastName,
-              email: jsonData.email,
-              username: jsonData.username,
-              token: jsonData.token,
-          } as UserType
+          // login successful
+          // set user info in session storage
+          const jsonData = JSON.parse(data);
+          // console.log(jsonData);
+          const remappeddata = {
+            id: jsonData.id,
+            firstName: jsonData.firstName,
+            lastName: jsonData.lastName,
+            email: jsonData.email,
+            username: jsonData.username,
+            token: jsonData.token,
+          } as UserType;
           // console.log(remappeddata)
-            sessionStorage.setItem("userinfo", JSON.stringify(remappeddata));
-            props.setUser(remappeddata);
+          sessionStorage.setItem("userinfo", JSON.stringify(remappeddata));
+          props.setUser(remappeddata);
 
+          setSnackbarSuccessMessage(
+            "Logged in successfully. Redirecting to the home page in 3 seconds.."
+          );
+          setSnackbarSuccessOpen(true);
+
+          setTimeout(() => {
             // redirect to home page
             document.location.href = props.urlExtension + "/home";
-
+          }, 3000);
         }
 
         props.setLoading(false);
-
       },
       (data: any, req: XMLHttpRequest) => {
         // error
         console.error("Login failed");
         console.error(data);
         props.setLoading(false);
+        setSnackbarErrorMessage(
+          "Login failed. Please try again later."
+        );
+        setSnackbarErrorOpen(true);
       }
     );
-
   };
   return (
     <ContainerStyled maxWidth="xs">
@@ -150,10 +180,10 @@ export default function Login(props: ILoginProps) {
             fullWidth
             required
             {...register("username")}
-            />
-            {errors.username?.message && (
-              <div className="invalid-feedback">{errors.username?.message}</div>
-            )}
+          />
+          {errors.username?.message && (
+            <div className="invalid-feedback">{errors.username?.message}</div>
+          )}
           <TextField
             label="Password"
             type="password"
@@ -175,7 +205,6 @@ export default function Login(props: ILoginProps) {
             Reset
           </ButtonStyled>
 
-
           {/* Link to register page */}
           <Typography>
             Don't have an account?{" "}
@@ -192,6 +221,14 @@ export default function Login(props: ILoginProps) {
             </Link>
           </Typography>
         </FormStyled>
+        <SuccessAndFailureSnackbar
+          snackbarSuccessOpen={snackbarSuccessOpen}
+          handleSnackbarSuccessClose={handleSnackbarSuccessClose}
+          snackbarSuccessMessage={snackbarSuccessMessage}
+          snackbarErrorOpen={snackbarErrorOpen}
+          handleSnackbarErrorClose={handleSnackbarErrorClose}
+          snackbarErrorMessage={snackbarErrorMessage}
+        />
       </PaperStyled>
     </ContainerStyled>
   );

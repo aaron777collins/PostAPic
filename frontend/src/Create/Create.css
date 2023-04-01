@@ -1,0 +1,23 @@
+.create-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    padding: 24px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 48px auto; /* Add 48px margin on the top and bottom */
+  }
+
+
+#contained-button-file {
+    display: none;
+}
+
+.MuiButton-root {
+    margin-right: 8px !important;
+}

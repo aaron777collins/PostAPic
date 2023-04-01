@@ -14,6 +14,8 @@ import { UserType } from "../Types/UserType";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useState } from "react";
+import SuccessAndFailureSnackbar from "../CustomSnackbar/SuccessAndFailureSnackbar";
 
 
 
@@ -49,6 +51,21 @@ export interface IRegisterProps {
 }
 
 export default function Register(props: IRegisterProps) {
+
+  const [snackbarSuccessOpen, setSnackbarSuccessOpen] = useState(false);
+  const [snackbarSuccessMessage, setSnackbarSuccessMessage] = useState("");
+  const [snackbarErrorOpen, setSnackbarErrorOpen] = useState(false);
+  const [snackbarErrorMessage, setSnackbarErrorMessage] = useState("");
+
+  const handleSnackbarSuccessClose = () => {
+    setSnackbarSuccessOpen(false);
+  };
+
+  const handleSnackbarErrorClose = () => {
+    setSnackbarErrorOpen(false);
+  };
+
+
   type RegisterSubmitForm = {
     firstName: string;
     lastName: string;
@@ -83,6 +100,10 @@ export default function Register(props: IRegisterProps) {
 
     if (!firstName || !lastName || !email || !username || !password) {
       console.error("Missing required fields");
+      setSnackbarErrorMessage(
+        "Registration failed: Missing required fields."
+      );
+      setSnackbarErrorOpen(true);
       return;
     }
 
@@ -106,32 +127,51 @@ export default function Register(props: IRegisterProps) {
             // show error message
             console.error("Register failed");
             console.error(data);
+            setSnackbarErrorMessage(
+              "Registration failed: Please try again later."
+            );
+            setSnackbarErrorOpen(true);
         } else {
 
             if (data.includes("already exists")) {
               console.error("Register failed");
               console.error(data);
-              alert("Username or email already exists")
+              setSnackbarErrorMessage(
+                "Registration failed: Username or email already exists."
+              );
+              setSnackbarErrorOpen(true);
               return;
             }
 
             if (data.includes("fill in")) {
               console.error("Register failed");
               console.error(data);
-              alert("Please fill in all fields")
+              setSnackbarErrorMessage(
+                "Registration failed: Please fill in all fields."
+              );
+              setSnackbarErrorOpen(true);
               return;
             }
 
             if (data.includes("error")) {
               console.error("Register failed");
               console.error(data);
-              alert("An error occurred")
+              setSnackbarErrorMessage(
+                "Registration failed: Please try again later."
+              );
+              setSnackbarErrorOpen(true);
               return;
             }
 
-            // success!
-            // redirect to login page
-            document.location.href = props.urlExtension + "/login";
+            setSnackbarSuccessMessage(
+              "Registered successfully. Redirecting to the login page in 3 seconds.."
+            );
+            setSnackbarSuccessOpen(true);
+
+            setTimeout(() => {
+              // redirect to login page
+              document.location.href = props.urlExtension + "/login";
+            }, 3000);
 
         }
 
@@ -250,6 +290,14 @@ export default function Register(props: IRegisterProps) {
             </Link>
           </Typography>
         </FormStyled>
+        <SuccessAndFailureSnackbar
+          snackbarSuccessOpen={snackbarSuccessOpen}
+          handleSnackbarSuccessClose={handleSnackbarSuccessClose}
+          snackbarSuccessMessage={snackbarSuccessMessage}
+          snackbarErrorOpen={snackbarErrorOpen}
+          handleSnackbarErrorClose={handleSnackbarErrorClose}
+          snackbarErrorMessage={snackbarErrorMessage}
+        />
       </PaperStyled>
     </ContainerStyled>
   );

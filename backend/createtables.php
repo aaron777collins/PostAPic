@@ -41,6 +41,7 @@ $sql2 = "CREATE TABLE IF NOT EXISTS posts (
     title VARCHAR(50) NOT NULL,
     description VARCHAR(500) NOT NULL,
     image LONGBLOB NOT NULL,
+    imagetype VARCHAR(50) NOT NULL,
     post_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (userid) REFERENCES users(id)
     )";
@@ -68,7 +69,17 @@ $sql5 = "CREATE TABLE IF NOT EXISTS follows (
     FOREIGN KEY (otheruserid) REFERENCES users(id)
     )";
 
-$sql6 = "SELECT * FROM users WHERE username = 'admin' AND password = 'admin'";
+$sql6 = "CREATE TABLE IF NOT EXISTS tokens (
+    id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    userid INT(6) UNSIGNED NOT NULL,
+    token VARCHAR(256) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (userid) REFERENCES users(id)
+    )";
+
+$sql7 = "SELECT * FROM users WHERE username = 'admin' AND password = 'admin'";
+
+
 
 // executing sql query
 $result1 = mysqli_query($conn, $sql1);
@@ -77,9 +88,10 @@ $result3 = mysqli_query($conn, $sql3);
 $result4 = mysqli_query($conn, $sql4);
 $result5 = mysqli_query($conn, $sql5);
 $result6 = mysqli_query($conn, $sql6);
+$result7 = mysqli_query($conn, $sql7);
 
-// check if $result6 is empty
-if ($result6->num_rows == 0) {
+// check if $result7 is empty
+if ($result7->num_rows == 0) {
     // add admin account with username: admin, password: admin
     // only if admin doesn't exist
     $addAdmin = "INSERT INTO users (username, firstname, lastname, password, email) VALUES ('admin', 'admin', 'admin', 'admin', 'admin@example.com')";
@@ -91,4 +103,4 @@ if ($result6->num_rows == 0) {
 
 
 // sends result back in JSON format
-echo json_encode(array("results" => array($result1, $result2, $result3, $result4, $result5, $result6)));
+echo json_encode(array("results" => array($result1, $result2, $result3, $result4, $result5, $result6, $result7)));

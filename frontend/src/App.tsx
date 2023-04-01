@@ -57,7 +57,7 @@ function App() {
           <Route path={urlExtension + "/"} element={<Home />} />
           <Route path={urlExtension + "/home"} element={<Home />} />
           <Route path={urlExtension + "/search"} element={<Search />} />
-          <Route path={urlExtension + "/create"} element={<Create />} />
+          <Route path={urlExtension + "/create"} element={<Create urlExtension={urlExtension} setLoading={setLoading} apiURL={apiURL} user={user}/>} />
           <Route path={urlExtension + "/admin"} element={<Admin />} />
           <Route path={urlExtension + "/profile"} element={<Profile />} />
           <Route

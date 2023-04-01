@@ -59,6 +59,19 @@
             return;
         }
 
+
+        // delete old tokens
+        $sql_delete_tokens_older_than_30 = "DELETE FROM tokens WHERE TIMESTAMPDIFF(MINUTE, created_at, NOW()) > 30;";
+        $conn->query($sql_delete_tokens_older_than_30);
+
+        if ($conn->error) {
+            // return an error
+            $response = array(
+                "error" => "Error deleting old tokens"
+            );
+            echo json_encode($response);
+            return;
+        }
         // username found, password matches
         // issue a session token
         $token = uniqid();
@@ -66,6 +79,27 @@
         $_SESSION["token"] = $token;
         // store username
         $_SESSION["username"] = $username;
+
+        // store token in database
+        // matches this table:
+        // CREATE TABLE IF NOT EXISTS tokens (
+        // id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        // userid INT(6) UNSIGNED NOT NULL,
+        // token VARCHAR(256) NOT NULL,
+        // created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        // FOREIGN KEY (userid) REFERENCES users(id)
+        // )
+        $store_token_sql = "INSERT INTO tokens (userid, token) VALUES ((SELECT id FROM users WHERE username = '$username'), '$token')";
+        $conn->query($store_token_sql);
+
+        if ($conn->error) {
+            // return an error
+            $response = array(
+                "error" => "Error storing token"
+            );
+            echo json_encode($response);
+            return;
+        }
 
         // return the user info as JSON
         $row = $result->fetch_assoc();
