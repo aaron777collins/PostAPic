@@ -1,0 +1,9 @@
+/* uses MUI grid but needs spacing on the sides to be centered */
+.main-content {
+    /* centering content with a width of 600px */
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 0 24px;
+
+
+}

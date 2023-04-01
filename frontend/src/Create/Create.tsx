@@ -49,7 +49,7 @@ const validationSchema = yup.object().shape({
       if (!value) return false;
       const file = Array.from(value as FileList)[0];
       const fileSize = file.size;
-      const validImageSize = 4294967290;
+      const validImageSize = 1000000;
       return fileSize < validImageSize;
     }),
 });
@@ -169,7 +169,7 @@ export default function Create(props: ICreateProps) {
             );
             setSnackbarSuccessOpen(true);
             setTimeout(() => {
-              // window.location.href = props.urlExtension + "/home";
+              window.location.href = props.urlExtension + "/home";
             }, 3000);
             // Reset form
             properReset();
