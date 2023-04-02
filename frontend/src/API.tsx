@@ -13,4 +13,18 @@ export default class API {
         };
         return xmlhttp;
     }
+
+    static POST_MULTIPART_FORM_DATA (data: any, url: string, successFunc: (data: any, req: XMLHttpRequest) => void, errorFunc: (data: any, req: XMLHttpRequest) => void) {
+        const xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("POST", url, true);
+        xmlhttp.send(data);
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                successFunc(this.responseText, this);
+            } else if (this.readyState === 4 && this.status !== 200) {
+                errorFunc(this.responseText, this);
+            }
+        };
+        return xmlhttp;
+    }
 }

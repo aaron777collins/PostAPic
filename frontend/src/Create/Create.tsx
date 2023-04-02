@@ -46,11 +46,11 @@ const validationSchema = yup.object().shape({
       const validImageTypes = ["image/jpeg", "image/png", "image/jpg"];
       return validImageTypes.includes(fileType);
     })
-    .test("fileSize", "File size is too large", (value) => {
+    .test("fileSize", "File size is too large (2MB max)", (value) => {
       if (!value) return false;
       const file = Array.from(value as FileList)[0];
       const fileSize = file.size;
-      const validImageSize = 130000;
+      const validImageSize = 2000000;
       return fileSize < validImageSize;
     }),
 });
@@ -94,27 +94,9 @@ export default function Create(props: ICreateProps) {
     // making a xmlhttprequest to the backend to create a post
     props.setLoading(true);
 
-    const file = Array.from(data.image)[0];
-    const reader = new FileReader();
-
-    reader.readAsDataURL(file);
-    reader.onload = async () => {
-      const imageRes = reader.result;
-
-      console.log(imageRes);
-
-      if (!imageRes) {
-        console.error("imageRes is null");
-        setSnackbarErrorMessage(
-          "Post creation failed: Please upload a valid image file (JPEG, JPG, PNG). The current file couldn't be read"
-        );
-        setSnackbarErrorOpen(true);
-        return;
-      }
-
       if (props.user.tokenExpiration < Date.now()) {
         setSnackbarErrorMessage(
-          "Post creation failed: Your token has expired. Please log in again."
+          "Post creation failed: Your token has expired. Please log in again. (Redirecting to login page in 3 seconds..)"
         );
         setSnackbarErrorOpen(true);
         props.setUser({
@@ -126,17 +108,22 @@ export default function Create(props: ICreateProps) {
           token: "",
           tokenExpiration: 0,
         } as UserType);
+        setTimeout(() => {
+          window.location.href = props.urlExtension + "/login";
+        }, 3000);
         return;
       }
 
-      await API.POST(
-        {
-          title: data.title,
-          description: data.description,
-          image: imageRes,
-          imagetype: file.type,
-          token: props.user.token,
-        },
+      // create formData
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("image", data.image[0]);
+      formData.append("imagetype", data.image[0].type);
+      formData.append("token", props.user.token);
+
+      await API.POST_MULTIPART_FORM_DATA(
+        formData,
         props.apiURL + "/createpost.php",
         (data: any, req: XMLHttpRequest) => {
           // successful response
@@ -148,7 +135,7 @@ export default function Create(props: ICreateProps) {
             console.error(data);
             if (data.includes("upload")) {
               setSnackbarErrorMessage(
-                "Post creation failed: Please upload a valid image file (JPEG, JPG, PNG)."
+                "Post creation failed: Please upload a valid image file (JPEG, JPG, PNG, GIF)."
               );
             } else if (data.includes("fill in")) {
               setSnackbarErrorMessage(
@@ -156,8 +143,11 @@ export default function Create(props: ICreateProps) {
               );
             } else if (data.includes("log in")) {
               setSnackbarErrorMessage(
-                "Post creation failed: Please log in to create a post."
+                "Post creation failed: Please log in to create a post (Redirecting to login page in 3 seconds..)."
               );
+              setTimeout(() => {
+                window.location.href = props.urlExtension + "/login";
+              }, 3000);
             } else {
               setSnackbarErrorMessage(
                 "Post creation failed. Please try again later."
@@ -168,7 +158,6 @@ export default function Create(props: ICreateProps) {
             // login successful
             // set user info in local storage
             const jsonData = JSON.parse(data);
-            // console.log(jsonData);
             const remappeddata = {
               id: jsonData.id,
               title: jsonData.title,
@@ -205,7 +194,7 @@ export default function Create(props: ICreateProps) {
           if (data) {
             if (data.includes("upload")) {
               setSnackbarErrorMessage(
-                "Post creation failed: Please upload a valid image file (JPEG, JPG, PNG)."
+                "Post creation failed: Please upload a valid image file (JPEG, JPG, PNG, GIF)."
               );
             } else if (data.includes("fill in")) {
               setSnackbarErrorMessage(
@@ -213,8 +202,11 @@ export default function Create(props: ICreateProps) {
               );
             } else if (data.includes("log in")) {
               setSnackbarErrorMessage(
-                "Post creation failed: Please log in to create a post."
+                "Post creation failed: Please log in to create a post (Redirecting to login page in 3 seconds..)."
               );
+              setTimeout(() => {
+                window.location.href = props.urlExtension + "/login";
+              }, 3000);
             } else {
               setSnackbarErrorMessage(
                 "Post creation failed. Please try again later."
@@ -226,12 +218,7 @@ export default function Create(props: ICreateProps) {
           setSnackbarErrorOpen(true);
         }
       );
-    };
-    reader.onerror = (error) => {
-      console.error(error);
-      setSnackbarErrorMessage("Post creation failed: Error reading the file.");
-      setSnackbarErrorOpen(true);
-    };
+
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -290,7 +277,7 @@ export default function Create(props: ICreateProps) {
                 {...field}
                 onChange={handleImageChange}
                 value={undefined} // Change this line
-                accept="image/jpeg, image/png, image/jpg"
+                accept="image/jpeg, image/png, image/jpg, image/gif"
                 id="contained-button-file"
                 type="file"
               />

@@ -1,23 +1,24 @@
 version: '3.7'
 services:
 
-  frontend:
-    build:
-      context: ./frontend
-    ports:
-      - "3000:3000"
-    networks:
-      - frontend
-    volumes:
-      - ./frontend:/app
-    environment:
-      WATCHPACK_POLLING: 'true'
-      REACT_APP_DEV: 'true'
-    deploy:
-      resources:
-        limits:
-          cpus: '2.00'
-          memory: 4192M
+  #   Hosts a dev frontend automatically BUT its slow
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #   ports:
+  #     - "3000:3000"
+  #   networks:
+  #     - frontend
+  #   volumes:
+  #     - ./frontend:/app
+  #   environment:
+  #     WATCHPACK_POLLING: 'true'
+  #     REACT_APP_DEV: 'true'
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '2.00'
+  #         memory: 4192M
 
   nginx-backend:
     image: nginx:alpine

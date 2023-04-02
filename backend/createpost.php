@@ -27,20 +27,54 @@
         return;
     }
 
-    $data = json_decode($_POST["data"], false);
+    // $data = json_decode($_POST["data"], false);
 
 
-    $title = $data->title;
-    $description = $data->description;
-    $image = $data->image;
-    $imagetype = $data->imagetype;
-    $token = $data->token;
+    // $title = $data->title;
+    // $description = $data->description;
+    // $image = $data->image;
+    // $imagetype = $data->imagetype;
+    // $token = $data->token;
+
+    if (isset($_POST["title"]) && isset($_POST["description"]) && isset($_FILES["image"]) && isset($_POST["imagetype"]) && isset($_POST["token"]) && $_FILES['image']['error'] == 0) {
+        // echo "All fields are set";
+    } else {
+        $response = array(
+            "error" => "Please fill in all fields"
+        );
+        echo json_encode($response);
+        return;
+    }
+
+    $title = $_POST["title"];
+    $description = $_POST["description"];
+    // $image = $_FILES["image"];
+    $imagetype = $_POST["imagetype"];
+    $token = $_POST["token"];
+
+    // ensure type matches and is jpeg, jpg, png or gif
+    if ($imagetype != "image/jpeg" && $imagetype != "image/jpg" && $imagetype != "image/png" && $imagetype != "image/gif") {
+        $response = array(
+            "error" => "Please upload a JPEG, PNG or GIF image"
+        );
+        echo json_encode($response);
+        return;
+    }
+
+    if ($_FILES['image']['type'] != $imagetype) {
+        $response = array(
+            "error" => "Image type does not match"
+        );
+        echo json_encode($response);
+        return;
+    }
 
 
     // Remove the data:image/jpeg;base64, part from the base64 string
-    $base64Image = substr($image, strpos($image, ",") + 1);
+    // $base64Image = substr($image, strpos($image, ",") + 1);
 
-    // $base64Image = base64_encode($base64Image);
+    $image = file_get_contents($_FILES['image']['tmp_name']);
+    $base64Image = base64_encode($image);
 
     // $base64Image = $image;
 
