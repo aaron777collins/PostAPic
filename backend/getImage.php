@@ -30,7 +30,7 @@ if (isset($_GET['post_id'])) {
     $sql = "SELECT imageType,image FROM posts WHERE id=?";
     $statement = $conn->prepare($sql);
     $statement->bind_param("i", $_GET['post_id']);
-    $statement->execute() or die("<b>Error:</b> Problem on Retrieving Image BLOB<br/>" . mysqli_connect_error());
+    $statement->execute() or die("<b>Error:</b> Problem on Retrieving Image BLOB<br/>");
     $result = $statement->get_result();
 
     $row = $result->fetch_assoc();

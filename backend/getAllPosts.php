@@ -48,7 +48,7 @@
 
     // image is a longblob.
 
-    $result = mysqli_execute_query($conn, $sql);
+    $result = $conn->query($sql);
     $posts = array();
     while ($row = $result->fetch_assoc()) {
         $posts[] = $row;

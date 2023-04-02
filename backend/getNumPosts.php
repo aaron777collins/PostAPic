@@ -30,10 +30,10 @@
     // returns the number of posts in the database
     $sql = "SELECT COUNT(*) FROM posts";
 
-    $result = mysqli_query($conn, $sql);
+    $result = $conn->query($sql);
 
-    if (mysqli_num_rows($result) > 0) {
-        $row = mysqli_fetch_assoc($result);
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
         $response = array(
             "numPosts" => $row["COUNT(*)"]
         );
