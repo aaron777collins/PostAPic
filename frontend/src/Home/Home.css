@@ -3,7 +3,9 @@
     /* centering content with a width of 600px */
     margin: 0 auto;
     max-width: 800px;
-    padding: 0 24px;
+    padding: 0 24px 40px 24px;
+    align-self: center;
+    justify-content: center;
 
 
 }
