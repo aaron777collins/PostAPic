@@ -6,10 +6,13 @@ import Post, { IPostProps } from "../Post/Post";
 import API from "../API";
 import SuccessAndFailureSnackbar from "../CustomSnackbar/SuccessAndFailureSnackbar";
 import Posts from "../Posts/Posts";
+import { UserType } from "../Types/UserType";
 
 interface IHomeProps {
   setLoading: (loading: boolean) => void;
+  urlExtension: string;
   apiURL: string;
+  user: UserType;
 }
 
 export default function Home(props: IHomeProps) {
@@ -163,7 +166,15 @@ export default function Home(props: IHomeProps) {
           justifyContent="center"
           rowSpacing={1}
         >
-        <Posts posts={posts} />
+        <Posts posts={posts}
+              apiURL={props.apiURL}
+              urlExtension={props.urlExtension}
+              setLoading={props.setLoading}
+              user={props.user}
+              setSnackbarSuccessOpen={setSnackbarSuccessOpen}
+              setSnackbarSuccessMessage={setSnackbarSuccessMessage}
+              setSnackbarErrorOpen={setSnackbarErrorOpen}
+              setSnackbarErrorMessage={setSnackbarErrorMessage}/>
         </Grid>
         <div className="rightFloat">
           <Pagination

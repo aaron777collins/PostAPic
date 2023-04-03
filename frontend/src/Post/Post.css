@@ -36,9 +36,9 @@
 
   .post-author {
     margin: 5px 0;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
-    color: #999;
+    color: #888;
   }
 
   .post-description {
@@ -51,6 +51,31 @@
 
   .comments-header {
     margin: 0;
+  }
+
+  .comment-input {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+  }
+
+  .comment-textarea {
+    resize: vertical;
+    width: 100%; /* Subtract the padding from the total width */
+    height: 100px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    box-sizing: border-box; /* Add this line to account for padding and border in the width calculation */
+  }
+
+  .comment-button {
+    width: auto;
+    max-width: 180px; /* Adjust this value to your desired maximum width */
+    align-self: flex-end;
+    margin-right: 0 !important;
   }
 
   /* Mobile styles */

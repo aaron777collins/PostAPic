@@ -56,8 +56,8 @@ function App() {
         />
         <Loading loading={loading} />
         <Routes>
-          <Route path={urlExtension + "/"} element={<Home setLoading={setLoading} apiURL={apiURL}/>} />
-          <Route path={urlExtension + "/home"} element={<Home setLoading={setLoading} apiURL={apiURL}/>} />
+          <Route path={urlExtension + "/"} element={<Home setLoading={setLoading} apiURL={apiURL} urlExtension={urlExtension} user={user}/>} />
+          <Route path={urlExtension + "/home"} element={<Home setLoading={setLoading} apiURL={apiURL} urlExtension={urlExtension} user={user}/>} />
           <Route path={urlExtension + "/search"} element={<Search />} />
           <Route path={urlExtension + "/create"} element={<Create urlExtension={urlExtension} setLoading={setLoading} apiURL={apiURL} user={user} setUser={setUser}/>} />
           <Route path={urlExtension + "/admin"} element={<Admin />} />

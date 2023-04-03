@@ -52,6 +52,16 @@
     $posts = array();
     while ($row = $result->fetch_assoc()) {
         $posts[] = $row;
+
+        // find the username of the user who posted this post
+        $userid = $row["userid"];
+        $sql = "SELECT username FROM users WHERE id = $userid";
+        $result2 = $conn->query($sql);
+        $row2 = $result2->fetch_assoc();
+        $posts[count($posts) - 1]["author"] = $row2["username"];
+        if ($posts[count($posts) - 1]["author"] == null) {
+            $posts[count($posts) - 1]["author"] = "Unknown";
+        }
     }
 
     if (count($posts) == 0) {

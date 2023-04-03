@@ -1,0 +1,26 @@
+.comment-author {
+    margin: 5px 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #888;
+}
+
+.comment-description {
+    margin: 5px 0;
+    font-size: 16px;
+    /* dark comment color */
+    color: #333;
+}
+
+.comment-container {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.comment-date {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #888;
+}

@@ -34,8 +34,8 @@ interface IFormInputs {
 }
 
 const validationSchema = yup.object().shape({
-  title: yup.string().required("Title is required"),
-  description: yup.string().required("Description is required"),
+  title: yup.string().required("Title is required").max(50),
+  description: yup.string().required("Description is required").max(500),
   image: yup
     .mixed()
     .required("Image is required")
@@ -129,7 +129,7 @@ export default function Create(props: ICreateProps) {
           // successful response
 
           // checking if the response has "error" property
-          if (!data || data.includes("<br />" || data.includes("error"))) {
+          if (!data || data.includes("<br />") || data.includes("error")) {
             // show error message
             console.error("Creation failed");
             console.error(data);
