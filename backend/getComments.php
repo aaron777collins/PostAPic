@@ -36,7 +36,7 @@ if (empty($postid)) {
     return;
 }
 
-$sql = "SELECT * FROM comments WHERE postid = $postid ORDER BY comment_date DESC";
+$sql = "SELECT * FROM comments WHERE postid = $postid ORDER BY comment_date";
 
 $result = $conn->query($sql);
 
