@@ -54,7 +54,7 @@ export default function Post(props: IPostProps) {
     // make POST_MULTIPART_FORM_DATA call to getComments.php with the postid
     const formData = new FormData();
     formData.append("postid", props.postid);
-    console.log("Getting comments for post " + formData.get("postid"));
+    // console.log("Getting comments for post " + formData.get("postid"));
 
     API.POST_MULTIPART_FORM_DATA(
       formData,
@@ -64,27 +64,31 @@ export default function Post(props: IPostProps) {
         // checking if the response has "error" property
         if (!data || data.includes("<br />") || data.includes("error")) {
           // show error message
-          console.error("gathering failed");
-          console.error(data);
           if (data.includes("fill in")) {
             props.setSnackbarErrorMessage(
               "Comment gathering failed: Please fill in all the fields."
-            );
-            props.setSnackbarErrorOpen(true);
-          } else if (data.includes("log in")) {
-            props.setSnackbarErrorMessage(
-              "Comment gathering failed: Please log in to create a comment (Redirecting to login page in 3 seconds..)."
-            );
-            setTimeout(() => {
-              window.location.href = props.urlExtension + "/login";
-            }, 3000);
-            props.setSnackbarErrorOpen(true);
-          } else if (data.includes("No comments")) {
-            // not an error
-          } else {
+              );
+              props.setSnackbarErrorOpen(true);
+              console.error("Comment gathering failed");
+              console.error(data);
+            } else if (data.includes("log in")) {
+              props.setSnackbarErrorMessage(
+                "Comment gathering failed: Please log in to create a comment (Redirecting to login page in 3 seconds..)."
+                );
+                console.error("Comment gathering failed");
+                console.error(data);
+                setTimeout(() => {
+                  window.location.href = props.urlExtension + "/login";
+                }, 3000);
+                props.setSnackbarErrorOpen(true);
+              } else if (data.includes("No comments")) {
+                // not an error
+              } else {
+            console.error("Comment gathering failed");
+            console.error(data);
             props.setSnackbarErrorMessage(
               "Comment gathering failed. Please try again later."
-            );
+              );
             props.setSnackbarErrorOpen(true);
           }
           setComments([]);
@@ -100,13 +104,13 @@ export default function Post(props: IPostProps) {
           // console.log(data);
 
           const jsonData = JSON.parse(data);
-          console.log(jsonData["comments"]);
+          // console.log(jsonData["comments"]);
           // "id" => $row["id"],
-            // "userid" => $row["userid"],
-            // "username" => $username,
-            // "postid" => $row["postid"],
-            // "comment" => $row["comment"],
-            // "comment_date" => $row["comment_date"]
+          // "userid" => $row["userid"],
+          // "username" => $username,
+          // "postid" => $row["postid"],
+          // "comment" => $row["comment"],
+          // "comment_date" => $row["comment_date"]
           setComments(jsonData["comments"].map((comment: any) => ({
             id: comment["id"],
             userid: comment["userid"],
@@ -119,44 +123,50 @@ export default function Post(props: IPostProps) {
 
           // Handle submission logic here (e.g. call API to store data in the database)
           // props.setSnackbarSuccessMessage(
-          //   "Comments gathered successfully."
-          // );
-          // props.setSnackbarSuccessOpen(true);
-        }
+            //   "Comments gathered successfully."
+            // );
+            // props.setSnackbarSuccessOpen(true);
+          }
 
-        props.setLoading(false);
-      },
+          props.setLoading(false);
+        },
       (data: any, req: XMLHttpRequest) => {
         // error
-        console.error("Login failed");
-        console.error(data);
         // Handle submission logic here (e.g. call API to store data in the database)
         if (data) {
           if (data.includes("fill in")) {
+            console.error("Comment gathering failed");
+            console.error(data);
             props.setSnackbarErrorMessage(
               "Comment gathering failed: Please fill in all the fields."
-            );
-            props.setSnackbarErrorOpen(true);
-          } else if (data.includes("log in")) {
-            props.setSnackbarErrorMessage(
-              "Comment gathering failed: Please log in to create a comment (Redirecting to login page in 3 seconds..)."
-            );
-            setTimeout(() => {
-              window.location.href = props.urlExtension + "/login";
-            }, 3000);
-            props.setSnackbarErrorOpen(true);
-          } else if (data.includes("No comments")) {
-            // not an error
-          } else {
-            props.setSnackbarErrorMessage(
+              );
+              props.setSnackbarErrorOpen(true);
+            } else if (data.includes("log in")) {
+              console.error("Comment gathering failed");
+              console.error(data);
+              props.setSnackbarErrorMessage(
+                "Comment gathering failed: Please log in to create a comment (Redirecting to login page in 3 seconds..)."
+                );
+                console.error("Comment gathering failed");
+                console.error(data);
+                setTimeout(() => {
+                  window.location.href = props.urlExtension + "/login";
+                }, 3000);
+                props.setSnackbarErrorOpen(true);
+              } else if (data.includes("No comments")) {
+                // not an error
+              } else {
+                console.error("Comment gathering failed");
+                console.error(data);
+                props.setSnackbarErrorMessage(
               "Comment gathering failed. Please try again later."
-            );
-            props.setSnackbarErrorOpen(true);
+              );
+              props.setSnackbarErrorOpen(true);
+            }
           }
-        }
-        props.setLoading(false);
-        console.error(data);
-        setComments([]);
+          props.setLoading(false);
+          console.error(data);
+          setComments([]);
         props.setSnackbarErrorOpen(true);
       }
     );
