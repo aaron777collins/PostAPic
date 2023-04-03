@@ -24,7 +24,7 @@ export default function Posts(props: IPostsProps) {
         {props.posts.map((post, index) => (
           <Grid item xs={12} key={index} sx={{ margin: "0 auto" }}>
             <Post
-              id={post.id}
+              postid={post.postid}
               title={post.title}
               author={post.author}
               description={post.description}

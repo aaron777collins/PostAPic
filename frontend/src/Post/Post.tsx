@@ -10,9 +10,10 @@ import { PostType } from "../Types/PostType";
 import API from "../API";
 import { ICommentProps } from "../Comment/Comment";
 import Comment from "../Comment/Comment";
+import Comments from "../Comments/Comments";
 
 export interface IPostProps {
-  id: string;
+  postid: string;
   title: string;
   author: string;
   description: string;
@@ -44,12 +45,16 @@ export default function Post(props: IPostProps) {
   const [comments, setComments] = React.useState<ICommentProps[]>([]);
   const [needsUpdate, setNeedsUpdate] = React.useState<boolean>(false);
 
+  const [commentsHTML, setCommentsHTML] = React.useState<JSX.Element>(<></>);
+
   React.useEffect(() => {
     setNeedsUpdate(false);
 
+
     // make POST_MULTIPART_FORM_DATA call to getComments.php with the postid
     const formData = new FormData();
-    formData.append("postid", props.id);
+    formData.append("postid", props.postid);
+    console.log("Getting comments for post " + formData.get("postid"));
 
     API.POST_MULTIPART_FORM_DATA(
       formData,
@@ -82,6 +87,7 @@ export default function Post(props: IPostProps) {
             );
             props.setSnackbarErrorOpen(true);
           }
+          setComments([]);
         } else {
           // login successful
           // set user info in local storage
@@ -90,10 +96,11 @@ export default function Post(props: IPostProps) {
 
           // set comments info
 
-          console.log("Comment gathered successfully");
-          console.log(data);
+          // console.log("Comment gathered successfully");
+          // console.log(data);
 
           const jsonData = JSON.parse(data);
+          console.log(jsonData["comments"]);
           // "id" => $row["id"],
             // "userid" => $row["userid"],
             // "username" => $username,
@@ -108,6 +115,7 @@ export default function Post(props: IPostProps) {
             comment: comment["comment"],
             date: comment["comment_date"],
           } as ICommentProps)));
+
 
           // Handle submission logic here (e.g. call API to store data in the database)
           // props.setSnackbarSuccessMessage(
@@ -148,10 +156,11 @@ export default function Post(props: IPostProps) {
         }
         props.setLoading(false);
         console.error(data);
+        setComments([]);
         props.setSnackbarErrorOpen(true);
       }
     );
-  }, [needsUpdate]);
+  }, [needsUpdate, props]);
 
   const {
     handleSubmit,
@@ -180,7 +189,7 @@ export default function Post(props: IPostProps) {
 
     const formData = new FormData();
     formData.append("userid", props.user.id);
-    formData.append("postid", props.id);
+    formData.append("postid", props.postid);
     formData.append("comment", comment);
     formData.append("token", props.user.token);
 
@@ -262,6 +271,14 @@ export default function Post(props: IPostProps) {
     );
   };
 
+  React.useEffect(() => {
+    if (comments.length === 0) {
+      setCommentsHTML(<p className="no-comments">No comments yet.</p>);
+    } else {
+      setCommentsHTML(<Comments comments={comments} urlExtension={props.urlExtension} apiURL={props.apiURL} postID={props.postid}/>)
+    }
+  }, [props.postid, comments, props.urlExtension, props.apiURL]);
+
   return (
     <div className="post-container">
       <div className="post-top">
@@ -282,19 +299,7 @@ export default function Post(props: IPostProps) {
         <h3 className="comments-header">Comments</h3>
         {/* Add comment section here */}
         <div className="comments-container">
-          {comments.map((comment: ICommentProps) => (
-            <Comment
-              id={comment.id}
-              userid={comment.userid}
-              postid={comment.postid}
-              author={comment.author}
-              comment={comment.comment}
-              date={comment.date}
-              apiURL={props.apiURL}
-              urlExtension={props.urlExtension}
-              />
-          ))}
-
+          {commentsHTML}
         </div>
         <div className="comment-input">
           <Controller

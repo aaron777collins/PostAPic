@@ -120,7 +120,7 @@ export default function Home(props: IHomeProps) {
           console.log(jsonData);
           const remappeddata = jsonData["results"].map((post: any) => {
             return {
-              id: post.id,
+              postid: post.id,
               title: post.title,
               author: post.author,
               description: post.description,
