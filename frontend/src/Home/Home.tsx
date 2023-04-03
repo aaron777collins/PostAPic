@@ -158,13 +158,14 @@ export default function Home(props: IHomeProps) {
   return (
     <div>
       <div className="main-content">
-        <h1>Home</h1>
+        <h1 className="h1-header">Home</h1>
         <Grid
-          container
           spacing={4}
           alignItems="center"
           justifyContent="center"
+          justifySelf="center"
           rowSpacing={1}
+          className="grid-container"
         >
         <Posts posts={posts}
               apiURL={props.apiURL}

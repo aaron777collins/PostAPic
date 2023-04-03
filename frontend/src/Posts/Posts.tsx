@@ -1,6 +1,6 @@
 import * as React from "react";
 import Post, { IPostProps } from "../Post/Post";
-import { Box, Grid } from "@mui/material";
+import { Box, Container, Grid } from "@mui/material";
 import { UserType } from "../Types/UserType";
 
 export interface IPostsProps {
@@ -13,7 +13,6 @@ export interface IPostsProps {
   setSnackbarSuccessMessage: (message: string) => void;
   setSnackbarErrorOpen: (open: boolean) => void;
   setSnackbarErrorMessage: (message: string) => void;
-
 }
 
 export default function Posts(props: IPostsProps) {

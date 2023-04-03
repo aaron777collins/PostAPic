@@ -1,98 +1,121 @@
 /* Post.css */
 .post-container {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 20px;
-    justify-self:center;
-    margin-left: 24px;
-  }
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  justify-self: center;
+  -ms-word-break: break-all;
+  word-break: break-all;
 
+  /* Non standard for WebKit */
+  word-break: break-word;
+  hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+.post-top {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.post-image {
+  flex: 1 1 0px;
+  max-width: 500px;
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.post-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.post-content {
+  flex: 1;
+  margin-left: 20px;
+  -ms-word-break: break-all;
+  word-break: break-all;
+
+  /* Non standard for WebKit */
+  word-break: break-word;
+  hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+.post-title {
+  margin: -1px;
+  -ms-word-break: break-all;
+  word-break: break-all;
+
+  /* Non standard for WebKit */
+  word-break: break-word;
+  hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+.post-author {
+  margin: 5px 0 5px 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #888;
+}
+
+.post-description {
+  margin: 0;
+}
+
+.post-bottom {
+  margin-top: 20px;
+}
+
+.comments-header {
+  margin: 0;
+}
+
+.comment-input {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.comment-textarea {
+  resize: vertical;
+  width: 100%; /* Subtract the padding from the total width */
+  height: 100px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+  box-sizing: border-box; /* Add this line to account for padding and border in the width calculation */
+}
+
+.comment-button {
+  width: auto;
+  max-width: 180px; /* Adjust this value to your desired maximum width */
+  align-self: flex-end;
+  margin-right: 0 !important;
+}
+
+/* Mobile styles */
+@media (max-width: 600px) {
   .post-top {
-    display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
   }
 
   .post-image {
-    flex: 1 1 0px;
-    max-width: 500px;
-    max-height: 500px;
-    overflow: hidden;
-  }
-
-  .post-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 100%;
+    max-height: none;
+    margin-bottom: 20px;
   }
 
   .post-content {
-    flex: 1;
-    margin-left: 20px;
+    margin-left: 0;
   }
-
-  .post-title {
-    margin: -1px;
-  }
-
-  .post-author {
-    margin: 5px 0 5px 0;
-    font-size: 16px;
-    font-weight: bold;
-    color: #888;
-  }
-
-  .post-description {
-    margin: 0;
-  }
-
-  .post-bottom {
-    margin-top: 20px;
-  }
-
-  .comments-header {
-    margin: 0;
-  }
-
-  .comment-input {
-    display: flex;
-    flex-direction: column;
-    margin-top: 10px;
-  }
-
-  .comment-textarea {
-    resize: vertical;
-    width: 100%; /* Subtract the padding from the total width */
-    height: 100px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-family: inherit;
-    font-size: 14px;
-    box-sizing: border-box; /* Add this line to account for padding and border in the width calculation */
-  }
-
-  .comment-button {
-    width: auto;
-    max-width: 180px; /* Adjust this value to your desired maximum width */
-    align-self: flex-end;
-    margin-right: 0 !important;
-  }
-
-  /* Mobile styles */
-  @media (max-width: 600px) {
-    .post-top {
-      flex-direction: column;
-    }
-
-    .post-image {
-      max-width: 100%;
-      max-height: none;
-      margin-bottom: 20px;
-    }
-
-    .post-content {
-      margin-left: 0;
-    }
-  }
+}
