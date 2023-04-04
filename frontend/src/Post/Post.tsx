@@ -1,7 +1,7 @@
 // Post.tsx
 import * as React from "react";
 import "./Post.css";
-import { Button, TextField } from "@mui/material";
+import { Button, Pagination, TextField } from "@mui/material";
 import { UserType } from "../Types/UserType";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -47,6 +47,124 @@ export default function Post(props: IPostProps) {
 
   const [commentsHTML, setCommentsHTML] = React.useState<JSX.Element>(<></>);
 
+  const [page, setPage] = React.useState(1);
+  const [numComments, setNumComments] = React.useState(1);
+  const commentsPerPage = 10;
+
+
+  React.useEffect(() => {
+
+    const formData = new FormData();
+    formData.append("postid", props.postid);
+
+    API.POST_MULTIPART_FORM_DATA(
+      formData,
+      props.apiURL + "/getNumComments.php",
+      (data: any, req: XMLHttpRequest) => {
+        // successful response
+        // checking if the response has "error" property
+        if (!data || data.includes("<br />") || data.includes("error")) {
+          // show error message
+          if (data.includes("fill in")) {
+            props.setSnackbarErrorMessage(
+              "Gathering the number of comments failed: Please fill in all the fields."
+              );
+              props.setSnackbarErrorOpen(true);
+              console.error("Gathering the number of comments failed");
+              console.error(data);
+            } else if (data.includes("log in")) {
+              props.setSnackbarErrorMessage(
+                "Gathering the number of comments: Please log in to create a comment (Redirecting to login page in 3 seconds..)."
+                );
+                console.error("Gathering the number of comments failed");
+                console.error(data);
+                setTimeout(() => {
+                  window.location.href = props.urlExtension + "/login";
+                }, 3000);
+                props.setSnackbarErrorOpen(true);
+              } else if (data.includes("No comments")) {
+                // not an error
+              } else {
+            console.error("Gathering the number of comments failed");
+            console.error(data);
+            props.setSnackbarErrorMessage(
+              "Gathering the number of comments. Please try again later."
+              );
+            props.setSnackbarErrorOpen(true);
+          }
+
+        } else {
+          // login successful
+          // set user info in local storage
+
+          props.setLoading(false);
+
+          // set comments info
+
+          // console.log("Comment gathered successfully");
+          // console.log(data);
+
+          const jsonData = JSON.parse(data);
+          // console.log(jsonData["comments"]);
+          // "id" => $row["id"],
+          // "userid" => $row["userid"],
+          // "username" => $username,
+          // "postid" => $row["postid"],
+          // "comment" => $row["comment"],
+          // "comment_date" => $row["comment_date"]
+          console.log(jsonData["count"]);
+          setNumComments(jsonData["count"]);
+
+
+          // Handle submission logic here (e.g. call API to store data in the database)
+          // props.setSnackbarSuccessMessage(
+            //   "Comments gathered successfully."
+            // );
+            // props.setSnackbarSuccessOpen(true);
+          }
+
+          props.setLoading(false);
+        },
+      (data: any, req: XMLHttpRequest) => {
+        // error
+        // Handle submission logic here (e.g. call API to store data in the database)
+        if (data) {
+          if (data.includes("fill in")) {
+            props.setSnackbarErrorMessage(
+              "Gathering the number of comments failed: Please fill in all the fields."
+              );
+              props.setSnackbarErrorOpen(true);
+              console.error("Gathering the number of comments failed");
+              console.error(data);
+            } else if (data.includes("log in")) {
+              props.setSnackbarErrorMessage(
+                "Gathering the number of comments: Please log in to create a comment (Redirecting to login page in 3 seconds..)."
+                );
+                console.error("Gathering the number of comments failed");
+                console.error(data);
+                setTimeout(() => {
+                  window.location.href = props.urlExtension + "/login";
+                }, 3000);
+                props.setSnackbarErrorOpen(true);
+              } else if (data.includes("No comments")) {
+                // not an error
+              } else {
+            console.error("Gathering the number of comments failed");
+            console.error(data);
+            props.setSnackbarErrorMessage(
+              "Gathering the number of comments. Please try again later."
+              );
+            props.setSnackbarErrorOpen(true);
+          }
+          }
+          props.setLoading(false);
+          // console.error(data);
+        // props.setSnackbarErrorOpen(true);
+      }
+    );
+
+  }, [props.postid]);
+
   React.useEffect(() => {
     setNeedsUpdate(false);
 
@@ -54,6 +172,8 @@ export default function Post(props: IPostProps) {
     // make POST_MULTIPART_FORM_DATA call to getComments.php with the postid
     const formData = new FormData();
     formData.append("postid", props.postid);
+    formData.append("page", page.toString());
+    formData.append("commentsPerPage", commentsPerPage.toString());
     // console.log("Getting comments for post " + formData.get("postid"));
 
     API.POST_MULTIPART_FORM_DATA(
@@ -167,10 +287,10 @@ export default function Post(props: IPostProps) {
           props.setLoading(false);
           console.error(data);
           setComments([]);
-        props.setSnackbarErrorOpen(true);
+        // props.setSnackbarErrorOpen(true);
       }
     );
-  }, [needsUpdate, props]);
+  }, [needsUpdate, props, page, commentsPerPage]);
 
   const {
     handleSubmit,
@@ -311,6 +431,11 @@ export default function Post(props: IPostProps) {
         <div className="comments-container">
           {commentsHTML}
         </div>
+        <Pagination
+            count={Math.ceil(numComments / commentsPerPage)}
+            onChange={(e, page) => setPage(page)}
+            className="pagination"
+          />
         <div className="comment-input">
           <Controller
             name="comment"

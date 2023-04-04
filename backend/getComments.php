@@ -26,9 +26,9 @@ if ($conn->connect_error) {
     return;
 }
 
-$postid = $_POST["postid"];
-
-if (empty($postid)) {
+if (isset($_POST["postid"]) && isset($_POST["page"]) && isset($_POST["commentsPerPage"])) {
+    // echo "All fields are set";
+} else {
     $response = array(
         "error" => "Please fill in all fields"
     );
@@ -36,7 +36,23 @@ if (empty($postid)) {
     return;
 }
 
-$sql = "SELECT * FROM comments WHERE postid = $postid ORDER BY comment_date";
+$postid = $_POST["postid"];
+$page = $_POST["page"];
+$commentsPerPage = $_POST["commentsPerPage"];
+
+if (empty($postid) || empty($page) || empty($commentsPerPage)) {
+    $response = array(
+        "error" => "Please fill in all fields"
+    );
+    echo json_encode($response);
+    return;
+}
+
+// same as commented but with a limit and offset
+
+$offset = ($page - 1) * $commentsPerPage;
+
+$sql = "SELECT * FROM comments WHERE postid = $postid ORDER BY comment_date LIMIT $commentsPerPage OFFSET $offset";
 
 $result = $conn->query($sql);
 

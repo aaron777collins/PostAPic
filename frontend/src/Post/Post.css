@@ -119,3 +119,9 @@
     margin-left: 0;
   }
 }
+
+.pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 0;
+}
