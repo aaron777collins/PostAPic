@@ -11,6 +11,7 @@ import API from "../API";
 import { ICommentProps } from "../Comment/Comment";
 import Comment from "../Comment/Comment";
 import Comments from "../Comments/Comments";
+import Overlay from "../Overlay/Overlay";
 
 export interface IPostProps {
   postid: string;
@@ -53,6 +54,16 @@ export default function Post(props: IPostProps) {
 
   const [liked, setLiked] = React.useState<boolean>(false);
   const [likes, setLikes] = React.useState<number>(0);
+
+  const [showOverlay, setShowOverlay] = React.useState(false);
+
+  const handleImageClick = () => {
+    setShowOverlay(true);
+  };
+
+  const handleCloseOverlay = () => {
+    setShowOverlay(false);
+  };
 
   React.useEffect(() => {
     if (props.user.id !== "") {
@@ -156,7 +167,9 @@ export default function Post(props: IPostProps) {
               "Gathering the number of likes failed: Please fill in the required postID"
             );
             props.setSnackbarErrorOpen(true);
-            console.error("Gathering the number of likes failed: Please fill in the required postID");
+            console.error(
+              "Gathering the number of likes failed: Please fill in the required postID"
+            );
             console.error(data);
           } else {
             console.error("Gathering the number of likes failed");
@@ -189,7 +202,9 @@ export default function Post(props: IPostProps) {
               "Gathering the number of likes failed: Please fill in the required postID"
             );
             props.setSnackbarErrorOpen(true);
-            console.error("Gathering the number of likes failed: Please fill in the required postID");
+            console.error(
+              "Gathering the number of likes failed: Please fill in the required postID"
+            );
             console.error(data);
           } else {
             console.error("Gathering the number of likes failed");
@@ -778,13 +793,21 @@ export default function Post(props: IPostProps) {
   return (
     <div className="post-container">
       <div className="post-top">
-        <div className="post-image">
+        <div className="post-image" onClick={handleImageClick}>
           {/* base64 image */}
           <img
             src={"data:" + props.imagetype + ";base64," + props.base64Image}
             alt={props.title}
           />
         </div>
+        {showOverlay && (
+          <Overlay
+            imageSrc={
+              "data:" + props.imagetype + ";base64," + props.base64Image
+            }
+            onClose={handleCloseOverlay}
+          />
+        )}
         <div className="post-content">
           <h2 className="post-title">{props.title}</h2>
           <p className="post-author">{props.author}</p>
