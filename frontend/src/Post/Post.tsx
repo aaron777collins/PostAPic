@@ -1,7 +1,7 @@
 // Post.tsx
 import * as React from "react";
 import "./Post.css";
-import { Button, Pagination, TextField } from "@mui/material";
+import { Button, Pagination, TextField, Typography } from "@mui/material";
 import { UserType } from "../Types/UserType";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -51,9 +51,162 @@ export default function Post(props: IPostProps) {
   const [numComments, setNumComments] = React.useState(1);
   const commentsPerPage = 10;
 
+  const [liked, setLiked] = React.useState<boolean>(false);
+  const [likes, setLikes] = React.useState<number>(0);
 
   React.useEffect(() => {
+    if (props.user.id !== "") {
+      const formData = new FormData();
+      formData.append("postid", props.postid);
+      formData.append("userid", props.user.id);
 
+      API.POST_MULTIPART_FORM_DATA(
+        formData,
+        props.apiURL + "/getIfUserLiked.php",
+        (data: any, req: XMLHttpRequest) => {
+          // successful response
+          // checking if the response has "error" property
+          if (!data || data.includes("<br />") || data.includes("error")) {
+            // show error message
+            if (data.includes("fill in")) {
+              props.setSnackbarErrorMessage(
+                "Gathering if the user liked this post failed: Please fill in the required postID and userid."
+              );
+              props.setSnackbarErrorOpen(true);
+              console.error("Gathering if the user liked this post failed");
+              console.error(data);
+            } else {
+              console.error("Gathering if the user liked this post failed");
+              console.error(data);
+              props.setSnackbarErrorMessage(
+                "Gathering if the user liked this post failed. Please try again later."
+              );
+              props.setSnackbarErrorOpen(true);
+            }
+          } else {
+            // login successful
+            // set user info in local storage
+
+            props.setLoading(false);
+
+            // set comments info
+
+            // console.log("Comment gathered successfully");
+            // console.log(data);
+
+            const jsonData = JSON.parse(data);
+            // console.log(jsonData["comments"]);
+            // "id" => $row["id"],
+            // "userid" => $row["userid"],
+            // "username" => $username,
+            // "postid" => $row["postid"],
+            // "comment" => $row["comment"],
+            // "comment_date" => $row["comment_date"]
+            setLiked(jsonData["liked"]);
+
+            // Handle submission logic here (e.g. call API to store data in the database)
+            // props.setSnackbarSuccessMessage(
+            //   "Comments gathered successfully."
+            // );
+            // props.setSnackbarSuccessOpen(true);
+          }
+
+          props.setLoading(false);
+        },
+        (data: any, req: XMLHttpRequest) => {
+          // error
+          // Handle submission logic here (e.g. call API to store data in the database)
+          if (data) {
+            if (data.includes("fill in")) {
+              props.setSnackbarErrorMessage(
+                "Gathering if the user liked this post failed: Please fill in the required postID and username."
+              );
+              props.setSnackbarErrorOpen(true);
+              console.error("Gathering if the user liked this post failed");
+              console.error(data);
+            } else {
+              console.error("Gathering if the user liked this post failed");
+              console.error(data);
+              props.setSnackbarErrorMessage(
+                "Gathering if the user liked this post failed. Please try again later."
+              );
+              props.setSnackbarErrorOpen(true);
+            }
+          }
+          props.setLoading(false);
+          // console.error(data);
+          // props.setSnackbarErrorOpen(true);
+        }
+      );
+    }
+  }, [props.postid]);
+
+  React.useEffect(() => {
+    // get number of likes
+    const formData = new FormData();
+    formData.append("postid", props.postid);
+    formData.append("userid", props.user.id);
+
+    API.POST_MULTIPART_FORM_DATA(
+      formData,
+      props.apiURL + "/getNumLikes.php",
+      (data: any, req: XMLHttpRequest) => {
+        if (!data || data.includes("<br />") || data.includes("error")) {
+          if (data.includes("fill in")) {
+            props.setSnackbarErrorMessage(
+              "Gathering the number of likes failed: Please fill in the required postID and userid."
+            );
+            props.setSnackbarErrorOpen(true);
+            console.error("Gathering the number of likes failed: Please fill in the required postID and userid.");
+            console.error(data);
+          } else {
+            console.error("Gathering the number of likes failed");
+            console.error(data);
+            props.setSnackbarErrorMessage(
+              "Gathering the number of likes failed. Please try again later."
+            );
+            props.setSnackbarErrorOpen(true);
+          }
+        } else {
+          // got number of likes
+          // as numLikes in JSON
+
+          const jsonData = JSON.parse(data);
+          setLikes(parseInt(jsonData["numlikes"]));
+          // success message
+          props.setSnackbarSuccessMessage(
+            "Gathering the number of likes successful."
+          );
+          props.setSnackbarSuccessOpen(true);
+
+          props.setLoading(false);
+        }
+      },
+      (data: any, req: XMLHttpRequest) => {
+        // error
+        if (data) {
+          if (data.includes("fill in")) {
+            props.setSnackbarErrorMessage(
+              "Gathering the number of likes failed: Please fill in the required postID and userid."
+            );
+            props.setSnackbarErrorOpen(true);
+            console.error("Gathering the number of likes failed: Please fill in the required postID and userid.");
+            console.error(data);
+          } else {
+            console.error("Gathering the number of likes failed");
+            console.error(data);
+            props.setSnackbarErrorMessage(
+              "Gathering the number of likes failed. Please try again later."
+            );
+            props.setSnackbarErrorOpen(true);
+          }
+        }
+        props.setLoading(false);
+      }
+    );
+  }, [props.postid, props.user.id, liked, props]);
+
+  React.useEffect(() => {
     const formData = new FormData();
     formData.append("postid", props.postid);
 
@@ -68,31 +221,30 @@ export default function Post(props: IPostProps) {
           if (data.includes("fill in")) {
             props.setSnackbarErrorMessage(
               "Gathering the number of comments failed: Please fill in all the fields."
-              );
-              props.setSnackbarErrorOpen(true);
-              console.error("Gathering the number of comments failed");
-              console.error(data);
-            } else if (data.includes("log in")) {
-              props.setSnackbarErrorMessage(
-                "Gathering the number of comments: Please log in to create a comment (Redirecting to login page in 3 seconds..)."
-                );
-                console.error("Gathering the number of comments failed");
-                console.error(data);
-                setTimeout(() => {
-                  window.location.href = props.urlExtension + "/login";
-                }, 3000);
-                props.setSnackbarErrorOpen(true);
-              } else if (data.includes("No comments")) {
-                // not an error
-              } else {
+            );
+            props.setSnackbarErrorOpen(true);
+            console.error("Gathering the number of comments failed");
+            console.error(data);
+          } else if (data.includes("log in")) {
+            props.setSnackbarErrorMessage(
+              "Gathering the number of comments: Please log in to create a comment (Redirecting to login page in 3 seconds..)."
+            );
+            console.error("Gathering the number of comments failed");
+            console.error(data);
+            setTimeout(() => {
+              window.location.href = props.urlExtension + "/login";
+            }, 3000);
+            props.setSnackbarErrorOpen(true);
+          } else if (data.includes("No comments")) {
+            // not an error
+          } else {
             console.error("Gathering the number of comments failed");
             console.error(data);
             props.setSnackbarErrorMessage(
               "Gathering the number of comments. Please try again later."
-              );
+            );
             props.setSnackbarErrorOpen(true);
           }
-
         } else {
           // login successful
           // set user info in local storage
@@ -115,16 +267,15 @@ export default function Post(props: IPostProps) {
           console.log(jsonData["count"]);
           setNumComments(jsonData["count"]);
 
-
           // Handle submission logic here (e.g. call API to store data in the database)
           // props.setSnackbarSuccessMessage(
-            //   "Comments gathered successfully."
-            // );
-            // props.setSnackbarSuccessOpen(true);
-          }
+          //   "Comments gathered successfully."
+          // );
+          // props.setSnackbarSuccessOpen(true);
+        }
 
-          props.setLoading(false);
-        },
+        props.setLoading(false);
+      },
       (data: any, req: XMLHttpRequest) => {
         // error
         // Handle submission logic here (e.g. call API to store data in the database)
@@ -132,42 +283,40 @@ export default function Post(props: IPostProps) {
           if (data.includes("fill in")) {
             props.setSnackbarErrorMessage(
               "Gathering the number of comments failed: Please fill in all the fields."
-              );
-              props.setSnackbarErrorOpen(true);
-              console.error("Gathering the number of comments failed");
-              console.error(data);
-            } else if (data.includes("log in")) {
-              props.setSnackbarErrorMessage(
-                "Gathering the number of comments: Please log in to create a comment (Redirecting to login page in 3 seconds..)."
-                );
-                console.error("Gathering the number of comments failed");
-                console.error(data);
-                setTimeout(() => {
-                  window.location.href = props.urlExtension + "/login";
-                }, 3000);
-                props.setSnackbarErrorOpen(true);
-              } else if (data.includes("No comments")) {
-                // not an error
-              } else {
+            );
+            props.setSnackbarErrorOpen(true);
+            console.error("Gathering the number of comments failed");
+            console.error(data);
+          } else if (data.includes("log in")) {
+            props.setSnackbarErrorMessage(
+              "Gathering the number of comments: Please log in to create a comment (Redirecting to login page in 3 seconds..)."
+            );
+            console.error("Gathering the number of comments failed");
+            console.error(data);
+            setTimeout(() => {
+              window.location.href = props.urlExtension + "/login";
+            }, 3000);
+            props.setSnackbarErrorOpen(true);
+          } else if (data.includes("No comments")) {
+            // not an error
+          } else {
             console.error("Gathering the number of comments failed");
             console.error(data);
             props.setSnackbarErrorMessage(
               "Gathering the number of comments. Please try again later."
-              );
+            );
             props.setSnackbarErrorOpen(true);
           }
-          }
-          props.setLoading(false);
-          // console.error(data);
+        }
+        props.setLoading(false);
+        // console.error(data);
         // props.setSnackbarErrorOpen(true);
       }
     );
-
   }, [props.postid]);
 
   React.useEffect(() => {
     setNeedsUpdate(false);
-
 
     // make POST_MULTIPART_FORM_DATA call to getComments.php with the postid
     const formData = new FormData();
@@ -187,28 +336,28 @@ export default function Post(props: IPostProps) {
           if (data.includes("fill in")) {
             props.setSnackbarErrorMessage(
               "Comment gathering failed: Please fill in all the fields."
-              );
-              props.setSnackbarErrorOpen(true);
-              console.error("Comment gathering failed");
-              console.error(data);
-            } else if (data.includes("log in")) {
-              props.setSnackbarErrorMessage(
-                "Comment gathering failed: Please log in to create a comment (Redirecting to login page in 3 seconds..)."
-                );
-                console.error("Comment gathering failed");
-                console.error(data);
-                setTimeout(() => {
-                  window.location.href = props.urlExtension + "/login";
-                }, 3000);
-                props.setSnackbarErrorOpen(true);
-              } else if (data.includes("No comments")) {
-                // not an error
-              } else {
+            );
+            props.setSnackbarErrorOpen(true);
+            console.error("Comment gathering failed");
+            console.error(data);
+          } else if (data.includes("log in")) {
+            props.setSnackbarErrorMessage(
+              "Comment gathering failed: Please log in to create a comment (Redirecting to login page in 3 seconds..)."
+            );
+            console.error("Comment gathering failed");
+            console.error(data);
+            setTimeout(() => {
+              window.location.href = props.urlExtension + "/login";
+            }, 3000);
+            props.setSnackbarErrorOpen(true);
+          } else if (data.includes("No comments")) {
+            // not an error
+          } else {
             console.error("Comment gathering failed");
             console.error(data);
             props.setSnackbarErrorMessage(
               "Comment gathering failed. Please try again later."
-              );
+            );
             props.setSnackbarErrorOpen(true);
           }
           setComments([]);
@@ -231,25 +380,29 @@ export default function Post(props: IPostProps) {
           // "postid" => $row["postid"],
           // "comment" => $row["comment"],
           // "comment_date" => $row["comment_date"]
-          setComments(jsonData["comments"].map((comment: any) => ({
-            id: comment["id"],
-            userid: comment["userid"],
-            postid: comment["postid"],
-            author: comment["username"],
-            comment: comment["comment"],
-            date: comment["comment_date"],
-          } as ICommentProps)));
-
+          setComments(
+            jsonData["comments"].map(
+              (comment: any) =>
+                ({
+                  id: comment["id"],
+                  userid: comment["userid"],
+                  postid: comment["postid"],
+                  author: comment["username"],
+                  comment: comment["comment"],
+                  date: comment["comment_date"],
+                } as ICommentProps)
+            )
+          );
 
           // Handle submission logic here (e.g. call API to store data in the database)
           // props.setSnackbarSuccessMessage(
-            //   "Comments gathered successfully."
-            // );
-            // props.setSnackbarSuccessOpen(true);
-          }
+          //   "Comments gathered successfully."
+          // );
+          // props.setSnackbarSuccessOpen(true);
+        }
 
-          props.setLoading(false);
-        },
+        props.setLoading(false);
+      },
       (data: any, req: XMLHttpRequest) => {
         // error
         // Handle submission logic here (e.g. call API to store data in the database)
@@ -259,34 +412,34 @@ export default function Post(props: IPostProps) {
             console.error(data);
             props.setSnackbarErrorMessage(
               "Comment gathering failed: Please fill in all the fields."
-              );
-              props.setSnackbarErrorOpen(true);
-            } else if (data.includes("log in")) {
-              console.error("Comment gathering failed");
-              console.error(data);
-              props.setSnackbarErrorMessage(
-                "Comment gathering failed: Please log in to create a comment (Redirecting to login page in 3 seconds..)."
-                );
-                console.error("Comment gathering failed");
-                console.error(data);
-                setTimeout(() => {
-                  window.location.href = props.urlExtension + "/login";
-                }, 3000);
-                props.setSnackbarErrorOpen(true);
-              } else if (data.includes("No comments")) {
-                // not an error
-              } else {
-                console.error("Comment gathering failed");
-                console.error(data);
-                props.setSnackbarErrorMessage(
+            );
+            props.setSnackbarErrorOpen(true);
+          } else if (data.includes("log in")) {
+            console.error("Comment gathering failed");
+            console.error(data);
+            props.setSnackbarErrorMessage(
+              "Comment gathering failed: Please log in to create a comment (Redirecting to login page in 3 seconds..)."
+            );
+            console.error("Comment gathering failed");
+            console.error(data);
+            setTimeout(() => {
+              window.location.href = props.urlExtension + "/login";
+            }, 3000);
+            props.setSnackbarErrorOpen(true);
+          } else if (data.includes("No comments")) {
+            // not an error
+          } else {
+            console.error("Comment gathering failed");
+            console.error(data);
+            props.setSnackbarErrorMessage(
               "Comment gathering failed. Please try again later."
-              );
-              props.setSnackbarErrorOpen(true);
-            }
+            );
+            props.setSnackbarErrorOpen(true);
           }
-          props.setLoading(false);
-          console.error(data);
-          setComments([]);
+        }
+        props.setLoading(false);
+        console.error(data);
+        setComments([]);
         // props.setSnackbarErrorOpen(true);
       }
     );
@@ -405,9 +558,223 @@ export default function Post(props: IPostProps) {
     if (comments.length === 0) {
       setCommentsHTML(<p className="no-comments">No comments yet.</p>);
     } else {
-      setCommentsHTML(<Comments comments={comments} urlExtension={props.urlExtension} apiURL={props.apiURL} postID={props.postid}/>)
+      setCommentsHTML(
+        <Comments
+          comments={comments}
+          urlExtension={props.urlExtension}
+          apiURL={props.apiURL}
+          postID={props.postid}
+        />
+      );
     }
   }, [props.postid, comments, props.urlExtension, props.apiURL]);
+
+  const handleLikeClick = () => {
+    if (props.user.id === "") {
+      props.setSnackbarErrorMessage(
+        "Please log in to like a post (Redirecting to login page in 3 seconds..)."
+      );
+      props.setSnackbarErrorOpen(true);
+      setTimeout(() => {
+        window.location.href = props.urlExtension + "/login";
+      }, 3000);
+    } else {
+      props.setLoading(true);
+
+      // make POST request to likePost.php with postid, userid and token
+      const formData = new FormData();
+      formData.append("userid", props.user.id);
+      formData.append("postid", props.postid);
+      formData.append("token", props.user.token);
+      API.POST_MULTIPART_FORM_DATA(
+        formData,
+        props.apiURL + "/likePost.php",
+        (data: any, req: XMLHttpRequest) => {
+          // successful response
+          // checking if the response has "error" property
+          if (!data || data.includes("<br />") || data.includes("error")) {
+            // show error message
+            console.error("Like failed");
+            console.error(data);
+            if (data.includes("fill in")) {
+              props.setSnackbarErrorMessage(
+                "Like failed: Please fill in all the fields."
+              );
+            } else if (data.includes("log in")) {
+              props.setSnackbarErrorMessage(
+                "Like failed: Please log in to like a post (Redirecting to login page in 3 seconds..)."
+              );
+              setTimeout(() => {
+                window.location.href = props.urlExtension + "/login";
+              }, 3000);
+            } else if (data.includes("already")) {
+              props.setSnackbarErrorMessage(
+                "Like failed: You already liked this post."
+              );
+            } else {
+              props.setSnackbarErrorMessage(
+                "Like failed. Please try again later."
+              );
+            }
+            props.setSnackbarErrorOpen(true);
+          } else {
+            // add like logic
+            setLiked(true);
+            setLikes(likes + 1);
+            props.setSnackbarSuccessMessage("Post liked successfully.");
+            props.setSnackbarSuccessOpen(true);
+          }
+          props.setLoading(false);
+        },
+        (data: any, req: XMLHttpRequest) => {
+          // error
+          if (data) {
+            if (data.includes("fill in")) {
+              props.setSnackbarErrorMessage(
+                "Like failed: Please fill in all the fields."
+              );
+            } else if (data.includes("log in")) {
+              props.setSnackbarErrorMessage(
+                "Like failed: Please log in to like a post (Redirecting to login page in 3 seconds..)."
+              );
+              setTimeout(() => {
+                window.location.href = props.urlExtension + "/login";
+              }, 3000);
+            } else if (data.includes("already")) {
+              props.setSnackbarErrorMessage(
+                "Like failed: You already liked this post."
+              );
+            } else {
+              props.setSnackbarErrorMessage(
+                "Like failed. Please try again later."
+              );
+            }
+          }
+          props.setLoading(false);
+          console.error(data);
+          props.setSnackbarErrorOpen(true);
+        }
+      );
+
+      props.setLoading(false);
+    }
+  };
+
+  const handleUnlikeClick = () => {
+    if (props.user.id === "") {
+      props.setSnackbarErrorMessage(
+        "Please log in to unlike a post (Redirecting to login page in 3 seconds..)."
+      );
+      props.setSnackbarErrorOpen(true);
+      setTimeout(() => {
+        window.location.href = props.urlExtension + "/login";
+      }, 3000);
+    } else {
+      props.setLoading(true);
+
+      // make POST request to unlikePost.php with postid, userid and token
+      const formData = new FormData();
+      formData.append("userid", props.user.id);
+      formData.append("postid", props.postid);
+      formData.append("token", props.user.token);
+      API.POST_MULTIPART_FORM_DATA(
+        formData,
+        props.apiURL + "/unlikePost.php",
+        (data: any, req: XMLHttpRequest) => {
+          // successful response
+          // checking if the response has "error" property
+          if (!data || data.includes("<br />") || data.includes("error")) {
+            // show error message
+            console.error("Unlike failed");
+            console.error(data);
+            if (data.includes("fill in")) {
+              props.setSnackbarErrorMessage(
+                "Unlike failed: Please fill in all the fields."
+              );
+            } else if (data.includes("log in")) {
+              props.setSnackbarErrorMessage(
+                "Unlike failed: Please log in to unlike a post (Redirecting to login page in 3 seconds..)."
+              );
+              setTimeout(() => {
+                window.location.href = props.urlExtension + "/login";
+              }, 3000);
+            } else if (data.includes("already")) {
+              props.setSnackbarErrorMessage(
+                "Unlike failed: You already unliked this post."
+              );
+            } else {
+              props.setSnackbarErrorMessage(
+                "Unlike failed. Please try again later."
+              );
+            }
+            props.setSnackbarErrorOpen(true);
+          } else {
+            // add Unlike logic
+            setLiked(false);
+            setLikes(likes - 1);
+            props.setSnackbarSuccessMessage("Post unliked successfully.");
+            props.setSnackbarSuccessOpen(true);
+          }
+          props.setLoading(false);
+        },
+        (data: any, req: XMLHttpRequest) => {
+          // error
+          if (data) {
+            if (data.includes("fill in")) {
+              props.setSnackbarErrorMessage(
+                "Unlike failed: Please fill in all the fields."
+              );
+            } else if (data.includes("log in")) {
+              props.setSnackbarErrorMessage(
+                "Unlike failed: Please log in to unlike a post (Redirecting to login page in 3 seconds..)."
+              );
+              setTimeout(() => {
+                window.location.href = props.urlExtension + "/login";
+              }, 3000);
+            } else if (data.includes("already")) {
+              props.setSnackbarErrorMessage(
+                "Unlike failed: You already unliked this post."
+              );
+            } else {
+              props.setSnackbarErrorMessage(
+                "Unlike failed. Please try again later."
+              );
+            }
+          }
+          props.setLoading(false);
+          console.error(data);
+          props.setSnackbarErrorOpen(true);
+        }
+      );
+
+      props.setLoading(false);
+    }
+  };
+  const getLikeOrUnlikeButton = () => {
+    if (liked) {
+      return (
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => handleUnlikeClick()}
+          className="unlike-button"
+        >
+          Unlike
+        </Button>
+      );
+    } else {
+      return (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleLikeClick()}
+          className="like-button"
+        >
+          Like
+        </Button>
+      );
+    }
+  };
 
   return (
     <div className="post-container">
@@ -426,16 +793,18 @@ export default function Post(props: IPostProps) {
         </div>
       </div>
       <div className="post-bottom">
+        <h3 className="likes-header">
+          {likes} {likes === 1 ? "like" : "likes"}
+        </h3>
+        {getLikeOrUnlikeButton()}
         <h3 className="comments-header">Comments</h3>
         {/* Add comment section here */}
-        <div className="comments-container">
-          {commentsHTML}
-        </div>
+        <div className="comments-container">{commentsHTML}</div>
         <Pagination
-            count={Math.ceil(numComments / commentsPerPage)}
-            onChange={(e, page) => setPage(page)}
-            className="pagination"
-          />
+          count={Math.ceil(numComments / commentsPerPage)}
+          onChange={(e, page) => setPage(page)}
+          className="pagination"
+        />
         <div className="comment-input">
           <Controller
             name="comment"

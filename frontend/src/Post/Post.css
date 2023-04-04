@@ -75,7 +75,7 @@
 }
 
 .comments-header {
-  margin: 0;
+  margin: 5px 0 0 0;
 }
 
 .comment-input {
@@ -124,4 +124,8 @@
   display: flex;
   justify-content: flex-end;
   margin: 10px 0;
+}
+
+.likes-header {
+  margin: 0 0 5px 0;
 }
