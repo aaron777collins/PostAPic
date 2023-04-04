@@ -160,7 +160,6 @@ export default function Home(props: IHomeProps) {
       <div className="main-content">
         <h1 className="h1-header">Home</h1>
         <Grid
-          spacing={4}
           alignItems="center"
           justifyContent="center"
           justifySelf="center"

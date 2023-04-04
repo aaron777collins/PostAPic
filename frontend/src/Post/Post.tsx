@@ -575,9 +575,16 @@ export default function Post(props: IPostProps) {
       setCommentsHTML(
         <Comments
           comments={comments}
+          setComments={setComments}
           urlExtension={props.urlExtension}
           apiURL={props.apiURL}
           postID={props.postid}
+          user={props.user}
+          setLoading={props.setLoading}
+          setSnackbarSuccessMessage={props.setSnackbarSuccessMessage}
+          setSnackbarSuccessOpen={props.setSnackbarSuccessOpen}
+          setSnackbarErrorMessage={props.setSnackbarErrorMessage}
+          setSnackbarErrorOpen={props.setSnackbarErrorOpen}
         />
       );
     }
