@@ -87,7 +87,7 @@
         return;
     }
 
-    if ($imagetype != "image/jpeg" && $imagetype != "image/jpg" && $imagetype != "image/png") {
+    if ($imagetype != "image/jpeg" && $imagetype != "image/jpg" && $imagetype != "image/png" && $imagetype != "image/gif") {
         $response = array(
             "error" => "Please upload a JPEG or PNG image"
         );
