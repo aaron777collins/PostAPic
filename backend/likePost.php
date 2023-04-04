@@ -48,15 +48,12 @@ if (empty($postid) || empty($userid) || empty($token)) {
     return;
 }
 
-// Validate token
-$sql_token = "SELECT userid FROM tokens WHERE token='$token'";
-$result_token = $conn->query($sql_token);
-$row_token = $result_token->fetch_assoc();
-$userid = $row_token["userid"];
-
-if ($userid == "") {
+// Validate token and userid by checking if the token and userid is in the database
+$sql = "SELECT userid FROM tokens WHERE token='$token' AND userid='$userid'";
+$result = $conn->query($sql);
+if ($result->num_rows == 0) {
     $response = array(
-        "error" => "Invalid token. Please log in again"
+        "error" => "Invalid token. Please log in again."
     );
     echo json_encode($response);
     return;

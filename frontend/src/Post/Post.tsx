@@ -203,7 +203,7 @@ export default function Post(props: IPostProps) {
         props.setLoading(false);
       }
     );
-  }, [props.postid, props.user.id, liked, props]);
+  }, [props.postid]);
 
   React.useEffect(() => {
     const formData = new FormData();
