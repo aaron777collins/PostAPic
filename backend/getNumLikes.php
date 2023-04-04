@@ -26,7 +26,7 @@ if ($conn->connect_error) {
     return;
 }
 
-if (isset($_POST["postid"]) && isset($_POST["userid"])) {
+if (isset($_POST["postid"])) {
     // echo "All fields are set";
 } else {
     $response = array(
@@ -37,9 +37,8 @@ if (isset($_POST["postid"]) && isset($_POST["userid"])) {
 }
 
 $postid = $_POST["postid"];
-$userid = $_POST["userid"];
 
-if (empty($postid) || empty($userid)) {
+if (empty($postid)) {
     $response = array(
         "error" => "Please fill in all fields"
     );

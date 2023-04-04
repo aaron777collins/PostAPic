@@ -145,7 +145,6 @@ export default function Post(props: IPostProps) {
     // get number of likes
     const formData = new FormData();
     formData.append("postid", props.postid);
-    formData.append("userid", props.user.id);
 
     API.POST_MULTIPART_FORM_DATA(
       formData,
@@ -154,10 +153,10 @@ export default function Post(props: IPostProps) {
         if (!data || data.includes("<br />") || data.includes("error")) {
           if (data.includes("fill in")) {
             props.setSnackbarErrorMessage(
-              "Gathering the number of likes failed: Please fill in the required postID and userid."
+              "Gathering the number of likes failed: Please fill in the required postID"
             );
             props.setSnackbarErrorOpen(true);
-            console.error("Gathering the number of likes failed: Please fill in the required postID and userid.");
+            console.error("Gathering the number of likes failed: Please fill in the required postID");
             console.error(data);
           } else {
             console.error("Gathering the number of likes failed");
@@ -187,10 +186,10 @@ export default function Post(props: IPostProps) {
         if (data) {
           if (data.includes("fill in")) {
             props.setSnackbarErrorMessage(
-              "Gathering the number of likes failed: Please fill in the required postID and userid."
+              "Gathering the number of likes failed: Please fill in the required postID"
             );
             props.setSnackbarErrorOpen(true);
-            console.error("Gathering the number of likes failed: Please fill in the required postID and userid.");
+            console.error("Gathering the number of likes failed: Please fill in the required postID");
             console.error(data);
           } else {
             console.error("Gathering the number of likes failed");
