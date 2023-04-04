@@ -43,7 +43,7 @@ const validationSchema = yup.object().shape({
       if (!value) return false;
       const file = Array.from(value as FileList)[0];
       const fileType = file.type;
-      const validImageTypes = ["image/jpeg", "image/png", "image/jpg, image/gif"];
+      const validImageTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif"];
       return validImageTypes.includes(fileType);
     })
     .test("fileSize", "File size is too large (2MB max)", (value) => {
