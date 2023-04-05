@@ -1,7 +1,8 @@
 // Post.tsx
 import * as React from "react";
 import "./Post.css";
-import { Button, Pagination, TextField, Typography } from "@mui/material";
+import { Button, IconButton, Pagination, TextField, Typography } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { UserType } from "../Types/UserType";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,6 +13,7 @@ import { ICommentProps } from "../Comment/Comment";
 import Comment from "../Comment/Comment";
 import Comments from "../Comments/Comments";
 import Overlay from "../Overlay/Overlay";
+import ConfirmationDialog from "../ConfirmationDialog/ConfirmationDialog";
 
 export interface IPostProps {
   postid: string;
@@ -30,6 +32,7 @@ export interface IPostProps {
   setSnackbarSuccessMessage: (message: string) => void;
   setSnackbarErrorOpen: (open: boolean) => void;
   setSnackbarErrorMessage: (message: string) => void;
+  deletePost: (postID: string) => void;
 }
 
 interface IFormInputs {
@@ -56,6 +59,22 @@ export default function Post(props: IPostProps) {
   const [likes, setLikes] = React.useState<number>(0);
 
   const [showOverlay, setShowOverlay] = React.useState(false);
+
+  const [deletable, setDeletable] = React.useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (props.user.id !== "") {
+      // user is logged in
+      // check if user is the author of the comment
+      if (
+        props.user.username === props.author.toString() ||
+        props.user.username === "admin"
+      ) {
+        setDeletable(true);
+      }
+    }
+  }, [props.user.username, props.author]);
 
   const handleImageClick = () => {
     setShowOverlay(true);
@@ -797,8 +816,100 @@ export default function Post(props: IPostProps) {
     }
   };
 
+  function deletePost() {
+    const formData = new FormData();
+    formData.append("postid", props.postid);
+    formData.append("userid", props.user.id.toString());
+    formData.append("token", props.user.token);
+
+    API.POST_MULTIPART_FORM_DATA(
+      formData,
+      props.apiURL + "/deletePost.php",
+      (data: any, req: XMLHttpRequest) => {
+        // successful response
+        // checking if the response has "error" property
+        if (!data || data.includes("<br />") || data.includes("error")) {
+          // show error message
+          console.error("Post deletion failed");
+          console.error(data);
+          if (data.includes("fill in")) {
+            props.setSnackbarErrorMessage(
+              "Post deletion: Please fill in all the fields."
+            );
+          } else if (data.includes("log in")) {
+            props.setSnackbarErrorMessage(
+              "Post deletion: Please log in to delete a post (Redirecting to login page in 3 seconds..)."
+            );
+            setTimeout(() => {
+              window.location.href = props.urlExtension + "/login";
+            }, 3000);
+          } else {
+            props.setSnackbarErrorMessage(
+              "Post deletion. Please try again later."
+            );
+          }
+          props.setSnackbarErrorOpen(true);
+        } else {
+          //   logic to delete Post locally
+
+          console.log(data);
+          props.deletePost(props.postid);
+
+          props.setSnackbarSuccessMessage("Post deleted successfully.");
+          props.setSnackbarSuccessOpen(true);
+        }
+        props.setLoading(false);
+      },
+      (data: any, req: XMLHttpRequest) => {
+        // error
+        if (data) {
+          // show error message
+          console.error("Post deletion failed");
+          console.error(data);
+          if (data.includes("fill in")) {
+            props.setSnackbarErrorMessage(
+              "Post deletion: Please fill in all the fields."
+            );
+          } else if (data.includes("log in")) {
+            props.setSnackbarErrorMessage(
+              "Post deletion: Please log in to delete a post (Redirecting to login page in 3 seconds..)."
+            );
+            setTimeout(() => {
+              window.location.href = props.urlExtension + "/login";
+            }, 3000);
+          } else {
+            props.setSnackbarErrorMessage(
+              "Post deletion. Please try again later."
+            );
+          }
+          props.setSnackbarErrorOpen(true);
+        } else {
+          //   logic to delete Post locally
+
+          console.log(data);
+          props.deletePost(props.postid);
+
+          props.setSnackbarSuccessMessage("Post deleted successfully.");
+          props.setSnackbarSuccessOpen(true);
+        }
+        props.setLoading(false);
+      }
+    );
+  }
+
   return (
     <div className="post-container">
+      <div className="post-header">
+      {deletable && (
+          <IconButton
+            className="delete-button"
+            aria-label="delete"
+            onClick={() => setConfirmDeleteOpen(true)}
+          >
+            <DeleteIcon style={{ color: "red" }} />
+          </IconButton>
+        )}
+      </div>
       <div className="post-top">
         <div className="post-image" onClick={handleImageClick}>
           {/* base64 image */}
@@ -862,6 +973,15 @@ export default function Post(props: IPostProps) {
           </Button>
         </div>
       </div>
+      <ConfirmationDialog
+        title="Delete Comment"
+        confirmationDialog="Are you sure you want to delete this comment?"
+        confirmButtonText="Delete"
+        cancelButtonText="Cancel"
+        open={confirmDeleteOpen}
+        setOpen={setConfirmDeleteOpen}
+        onConfirm={deletePost}
+      />
     </div>
   );
 }

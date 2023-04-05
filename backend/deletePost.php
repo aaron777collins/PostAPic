@@ -46,7 +46,7 @@ if ($conn->connect_error) {
     // FOREIGN KEY (userid) REFERENCES users(id) (with ON DELETE CASCADE)
     // )
 
-if (isset($_POST["commentid"]) && isset($_POST["userid"]) && isset($_POST["token"])) {
+if (isset($_POST["postid"]) && isset($_POST["userid"]) && isset($_POST["token"])) {
     // echo "All fields are set";
 } else {
     $response = array(
@@ -56,7 +56,7 @@ if (isset($_POST["commentid"]) && isset($_POST["userid"]) && isset($_POST["token
     return;
 }
 
-$commentid = $_POST["commentid"];
+$postid = $_POST["postid"];
 $userid = $_POST["userid"];
 $token = $_POST["token"];
 
@@ -92,41 +92,55 @@ $result = $conn->query($sql);
 // if the user is the admin user, delete the comment regardless of the userid
 // else, delete the comments where the userid matches the userid of the comment
 
+// posts schema
+// CREATE TABLE IF NOT EXISTS posts (
+    // id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    // userid INT(6) UNSIGNED NOT NULL,
+    // title VARCHAR(50) NOT NULL,
+    // description VARCHAR(500) NOT NULL,
+    // image LONGBLOB NOT NULL,
+    // imagetype VARCHAR(50) NOT NULL,
+    // post_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    // FOREIGN KEY (userid) REFERENCES users(id) ON DELETE CASCADE
+    // )
 
 if ($result->num_rows > 0) {
     // admin
-    // delete comment
-    $sql = "DELETE FROM comments WHERE id='$commentid'";
-    $result = $conn->query($sql);
+    // delete post
+    $sql = "DELETE FROM posts WHERE id='$postid'";
 
-    if ($result) {
+    $result2 = $conn->query($sql);
+
+    if ($result2) {
         $response = array(
-            "success" => "Comment deleted"
+            "success" => "Post deleted successfully"
         );
         echo json_encode($response);
         return;
     } else {
         $response = array(
-            "error" => "Error deleting comment"
+            "error" => "Error deleting post"
         );
         echo json_encode($response);
         return;
     }
+
 } else {
 
-    // delete comment
-    $sql = "DELETE FROM comments WHERE id='$commentid' AND userid='$userid'";
-    $result = $conn->query($sql);
+    // delete post using the userid
+    $sql = "DELETE FROM posts WHERE id='$postid' AND userid='$userid'";
 
-    if ($result) {
+    $result2 = $conn->query($sql);
+
+    if ($result2) {
         $response = array(
-            "success" => "Comment deleted"
+            "success" => "Post deleted successfully"
         );
         echo json_encode($response);
         return;
     } else {
         $response = array(
-            "error" => "Error deleting comment"
+            "error" => "Error deleting post"
         );
         echo json_encode($response);
         return;

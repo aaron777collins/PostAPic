@@ -51,8 +51,8 @@ if (empty($postid)) {
 //     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 //     postid INT(6) UNSIGNED NOT NULL,
 //     userid INT(6) UNSIGNED NOT NULL,
-//     FOREIGN KEY (postid) REFERENCES posts(id),
-//     FOREIGN KEY (userid) REFERENCES users(id)
+//     FOREIGN KEY (postid) REFERENCES posts(id), (with ON DELETE CASCADE)
+//     FOREIGN KEY (userid) REFERENCES users(id) (with ON DELETE CASCADE)
 //     )
 
 // get the number of likes for a post

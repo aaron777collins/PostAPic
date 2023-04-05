@@ -104,7 +104,7 @@
     // image LONGBLOB NOT NULL,
     // imagetype VARCHAR(50) NOT NULL,
     // post_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    // FOREIGN KEY (userid) REFERENCES users(id)
+    // FOREIGN KEY (userid) REFERENCES users(id) (with ON DELETE CASCADE)
     // )
 
     // get username from token tables
@@ -114,7 +114,7 @@
     // userid INT(6) UNSIGNED NOT NULL,
     // token VARCHAR(256) NOT NULL,
     // created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    // FOREIGN KEY (userid) REFERENCES users(id)
+    // FOREIGN KEY (userid) REFERENCES users(id) (with ON DELETE CASCADE)
     // )
     $sql_token = "SELECT userid FROM tokens WHERE token='$token'";
     $result_token = $conn->query($sql_token);

@@ -59,7 +59,7 @@ export default function Comment(props: ICommentProps) {
             );
           } else if (data.includes("log in")) {
             props.setSnackbarErrorMessage(
-              "Comment deletion: Please log in to like a post (Redirecting to login page in 3 seconds..)."
+              "Comment deletion: Please log in to delete a comment (Redirecting to login page in 3 seconds..)."
             );
             setTimeout(() => {
               window.location.href = props.urlExtension + "/login";
@@ -93,7 +93,7 @@ export default function Comment(props: ICommentProps) {
             );
           } else if (data.includes("log in")) {
             props.setSnackbarErrorMessage(
-              "Comment deletion: Please log in to like a post (Redirecting to login page in 3 seconds..)."
+              "Comment deletion: Please log in to delete a comment (Redirecting to login page in 3 seconds..)."
             );
             setTimeout(() => {
               window.location.href = props.urlExtension + "/login";

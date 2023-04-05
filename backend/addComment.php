@@ -33,8 +33,8 @@ if ($conn->connect_error) {
 // postid INT(6) UNSIGNED NOT NULL,
 // comment VARCHAR(500) NOT NULL,
 // comment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-// FOREIGN KEY (userid) REFERENCES users(id),
-// FOREIGN KEY (postid) REFERENCES posts(id)
+// FOREIGN KEY (userid) REFERENCES users(id), (with ON DELETE CASCADE)
+// FOREIGN KEY (postid) REFERENCES posts(id) (with ON DELETE CASCADE)
 
 $userid = $_POST["userid"];
 $postid = $_POST["postid"];

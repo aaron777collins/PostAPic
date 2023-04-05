@@ -52,8 +52,8 @@ if (empty($postid) || empty($userid)) {
 //     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 //     postid INT(6) UNSIGNED NOT NULL,
 //     userid INT(6) UNSIGNED NOT NULL,
-//     FOREIGN KEY (postid) REFERENCES posts(id),
-//     FOREIGN KEY (userid) REFERENCES users(id)
+//     FOREIGN KEY (postid) REFERENCES posts(id), (with ON DELETE CASCADE)
+//     FOREIGN KEY (userid) REFERENCES users(id) (with ON DELETE CASCADE)
 //     )
 
 $sql = "SELECT * FROM likedby WHERE postid = $postid AND userid = $userid";

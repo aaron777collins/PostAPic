@@ -43,7 +43,7 @@ $sql2 = "CREATE TABLE IF NOT EXISTS posts (
     image LONGBLOB NOT NULL,
     imagetype VARCHAR(50) NOT NULL,
     post_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (userid) REFERENCES users(id)
+    FOREIGN KEY (userid) REFERENCES users(id) ON DELETE CASCADE
     )";
 $sql3 = "CREATE TABLE IF NOT EXISTS comments (
     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -51,22 +51,22 @@ $sql3 = "CREATE TABLE IF NOT EXISTS comments (
     postid INT(6) UNSIGNED NOT NULL,
     comment VARCHAR(500) NOT NULL,
     comment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (userid) REFERENCES users(id),
-    FOREIGN KEY (postid) REFERENCES posts(id)
+    FOREIGN KEY (userid) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (postid) REFERENCES posts(id) ON DELETE CASCADE
     )";
 $sql4 = "CREATE TABLE IF NOT EXISTS likedby (
     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     postid INT(6) UNSIGNED NOT NULL,
     userid INT(6) UNSIGNED NOT NULL,
-    FOREIGN KEY (postid) REFERENCES posts(id),
-    FOREIGN KEY (userid) REFERENCES users(id)
+    FOREIGN KEY (postid) REFERENCES posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (userid) REFERENCES users(id) ON DELETE CASCADE
     )";
 $sql5 = "CREATE TABLE IF NOT EXISTS follows (
     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     userid INT(6) UNSIGNED NOT NULL,
     otheruserid INT(6) UNSIGNED NOT NULL,
-    FOREIGN KEY (userid) REFERENCES users(id),
-    FOREIGN KEY (otheruserid) REFERENCES users(id)
+    FOREIGN KEY (userid) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (otheruserid) REFERENCES users(id) ON DELETE CASCADE
     )";
 
 $sql6 = "CREATE TABLE IF NOT EXISTS tokens (
@@ -74,7 +74,7 @@ $sql6 = "CREATE TABLE IF NOT EXISTS tokens (
     userid INT(6) UNSIGNED NOT NULL,
     token VARCHAR(256) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (userid) REFERENCES users(id)
+    FOREIGN KEY (userid) REFERENCES users(id) ON DELETE CASCADE
     )";
 
 $sql7 = "SELECT * FROM users WHERE username = 'admin' AND password = 'admin'";

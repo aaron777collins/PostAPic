@@ -13,6 +13,7 @@ export interface IPostsProps {
   setSnackbarSuccessMessage: (message: string) => void;
   setSnackbarErrorOpen: (open: boolean) => void;
   setSnackbarErrorMessage: (message: string) => void;
+  deletePost: (postID: string) => void;
 }
 
 export default function Posts(props: IPostsProps) {
@@ -40,6 +41,7 @@ export default function Posts(props: IPostsProps) {
               setSnackbarSuccessMessage={props.setSnackbarSuccessMessage}
               setSnackbarErrorOpen={props.setSnackbarErrorOpen}
               setSnackbarErrorMessage={props.setSnackbarErrorMessage}
+              deletePost={props.deletePost}
             />
             <Box mt={2} />
           </Grid>

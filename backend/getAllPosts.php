@@ -42,7 +42,7 @@
     // image LONGBLOB NOT NULL,
     // imagetype VARCHAR(50) NOT NULL,
     // post_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    // FOREIGN KEY (userid) REFERENCES users(id)
+    // FOREIGN KEY (userid) REFERENCES users(id) (with ON DELETE CASCADE)
 
     $sql = "SELECT * FROM posts ORDER BY post_date DESC LIMIT $offset, $postsPerPage";
 

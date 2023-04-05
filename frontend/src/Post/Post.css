@@ -130,3 +130,12 @@
 .likes-header {
   margin: 0 0 5px 0;
 }
+
+.post-header {
+  position: relative;
+  width: 100%;
+}
+
+.post-header .delete-button {
+  margin: -10px;
+}

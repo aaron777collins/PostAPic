@@ -155,6 +155,11 @@ export default function Home(props: IHomeProps) {
     props.setLoading(false);
   }, [page]);
 
+  const deletePost = (postid: string) => {
+    // remove from posts
+    setPosts(posts.filter((post) => post.postid !== postid));
+  }
+
   return (
     <div>
       <div className="main-content">
@@ -174,7 +179,9 @@ export default function Home(props: IHomeProps) {
               setSnackbarSuccessOpen={setSnackbarSuccessOpen}
               setSnackbarSuccessMessage={setSnackbarSuccessMessage}
               setSnackbarErrorOpen={setSnackbarErrorOpen}
-              setSnackbarErrorMessage={setSnackbarErrorMessage}/>
+              setSnackbarErrorMessage={setSnackbarErrorMessage}
+              deletePost={deletePost}
+              />
         </Grid>
         <div className="rightFloat">
           <Pagination

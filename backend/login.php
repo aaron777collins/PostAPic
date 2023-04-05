@@ -83,7 +83,7 @@
         // userid INT(6) UNSIGNED NOT NULL,
         // token VARCHAR(256) NOT NULL,
         // created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        // FOREIGN KEY (userid) REFERENCES users(id)
+        // FOREIGN KEY (userid) REFERENCES users(id) (with ON DELETE CASCADE)
         // )
         $store_token_sql = "INSERT INTO tokens (userid, token) VALUES ((SELECT id FROM users WHERE username = '$username'), '$token')";
         $conn->query($store_token_sql);
