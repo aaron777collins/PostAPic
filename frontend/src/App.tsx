@@ -13,6 +13,7 @@ import Profile from "./Profile/Profile";
 import Register from "./Register/Register";
 import Search from "./Search/Search";
 import { UserType } from "./Types/UserType";
+import API from "./API";
 
 function App() {
   const urlExtension = getProcessExtension();
@@ -61,7 +62,10 @@ function App() {
           <Route path={urlExtension + "/search"} element={<Search />} />
           <Route path={urlExtension + "/create"} element={<Create urlExtension={urlExtension} setLoading={setLoading} apiURL={apiURL} user={user} setUser={setUser}/>} />
           <Route path={urlExtension + "/admin"} element={<Admin />} />
-          <Route path={urlExtension + "/profile"} element={<Profile />} />
+          <Route path={urlExtension + "/profile"} element={<Profile setLoading={setLoading} apiURL={apiURL} urlExtension={urlExtension} user={user}
+          />} />
+          <Route path={urlExtension + "/profile/:username"} element={<Profile setLoading={setLoading} apiURL={apiURL} urlExtension={urlExtension} user={user}
+          />} />
           <Route
             path={urlExtension + "/login"}
             element={

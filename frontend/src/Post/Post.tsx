@@ -33,6 +33,8 @@ export interface IPostProps {
   setSnackbarErrorOpen: (open: boolean) => void;
   setSnackbarErrorMessage: (message: string) => void;
   deletePost: (postID: string) => void;
+  refreshPostsNeeded: boolean;
+  setRefreshPostsNeeded: (refreshPostsNeeded: boolean) => void;
 }
 
 interface IFormInputs {
@@ -75,6 +77,7 @@ export default function Post(props: IPostProps) {
       }
     }
   }, [props.user.username, props.author]);
+
 
   const handleImageClick = () => {
     setShowOverlay(true);
@@ -169,7 +172,7 @@ export default function Post(props: IPostProps) {
         }
       );
     }
-  }, [props.postid]);
+  }, [props.postid, props.refreshPostsNeeded, props.user.id]);
 
   React.useEffect(() => {
     // get number of likes
@@ -237,7 +240,7 @@ export default function Post(props: IPostProps) {
         props.setLoading(false);
       }
     );
-  }, [props.postid]);
+  }, [props.postid, props.refreshPostsNeeded, props.user.id]);
 
   React.useEffect(() => {
     const formData = new FormData();
@@ -346,7 +349,7 @@ export default function Post(props: IPostProps) {
         // props.setSnackbarErrorOpen(true);
       }
     );
-  }, [props.postid]);
+  }, [props.postid, props.refreshPostsNeeded, props.user.id]);
 
   React.useEffect(() => {
     setNeedsUpdate(false);
@@ -476,7 +479,7 @@ export default function Post(props: IPostProps) {
         // props.setSnackbarErrorOpen(true);
       }
     );
-  }, [needsUpdate, props, page, commentsPerPage]);
+  }, [needsUpdate, props, page, commentsPerPage, props.refreshPostsNeeded]);
 
   const {
     handleSubmit,
@@ -663,6 +666,7 @@ export default function Post(props: IPostProps) {
             setLikes(likes + 1);
             props.setSnackbarSuccessMessage("Post liked successfully.");
             props.setSnackbarSuccessOpen(true);
+            props.setRefreshPostsNeeded(!props.refreshPostsNeeded);
           }
           props.setLoading(false);
         },
@@ -754,6 +758,7 @@ export default function Post(props: IPostProps) {
             setLikes(likes - 1);
             props.setSnackbarSuccessMessage("Post unliked successfully.");
             props.setSnackbarSuccessOpen(true);
+            props.setRefreshPostsNeeded(!props.refreshPostsNeeded);
           }
           props.setLoading(false);
         },
@@ -857,6 +862,7 @@ export default function Post(props: IPostProps) {
 
           props.setSnackbarSuccessMessage("Post deleted successfully.");
           props.setSnackbarSuccessOpen(true);
+          props.setRefreshPostsNeeded(!props.refreshPostsNeeded);
         }
         props.setLoading(false);
       },

@@ -28,7 +28,7 @@
     }
 
     // verify it is set
-    if (!isset($_POST["page"]) || !isset($_POST["postsPerPage"])) {
+    if (!isset($_POST["userid"]) || !isset($_POST["page"]) || !isset($_POST["postsPerPage"])) {
         $response = array(
             "error" => "Please fill in all required fields."
         );
@@ -36,12 +36,13 @@
         return;
     }
 
-    // get from POST request
+    // read post request
+    $userid = $_POST["userid"];
     $page = $_POST["page"];
     $postsPerPage = $_POST["postsPerPage"];
 
-    // verify not empty
-    if (empty($page) || empty($postsPerPage)) {
+    // check if userid is empty
+    if (empty($userid) || empty($page) || empty($postsPerPage)) {
         $response = array(
             "error" => "Please fill in all required fields."
         );
@@ -62,7 +63,7 @@
     // post_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     // FOREIGN KEY (userid) REFERENCES users(id) (with ON DELETE CASCADE)
 
-    $sql = "SELECT * FROM posts ORDER BY post_date DESC LIMIT $offset, $postsPerPage";
+    $sql = "SELECT * FROM posts WHERE userid = $userid ORDER BY post_date DESC LIMIT $offset, $postsPerPage";
 
     // image is a longblob.
 

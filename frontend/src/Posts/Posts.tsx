@@ -14,11 +14,15 @@ export interface IPostsProps {
   setSnackbarErrorOpen: (open: boolean) => void;
   setSnackbarErrorMessage: (message: string) => void;
   deletePost: (postID: string) => void;
+  refreshPostsNeeded: boolean;
+  setRefreshPostsNeeded: (refreshPostsNeeded: boolean) => void;
 }
+
+
 
 export default function Posts(props: IPostsProps) {
   if (props.posts.length === 0) {
-    return <h1>No posts found</h1>;
+    return <h2>No posts found</h2>;
   } else {
     return (
       <div>
@@ -42,6 +46,8 @@ export default function Posts(props: IPostsProps) {
               setSnackbarErrorOpen={props.setSnackbarErrorOpen}
               setSnackbarErrorMessage={props.setSnackbarErrorMessage}
               deletePost={props.deletePost}
+              refreshPostsNeeded={props.refreshPostsNeeded}
+              setRefreshPostsNeeded={props.setRefreshPostsNeeded}
             />
             <Box mt={2} />
           </Grid>
