@@ -1,0 +1,32 @@
+.user-result-container {
+    /* contains a user result */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+  }
+
+  .user-result-container:hover {
+    /* when hovering over a user result */
+    background-color: #efefef;
+  }
+
+  .username-header {
+    /* the username header */
+    margin: 10px 10px;
+  }
+
+  .button-container {
+    /* the container for the follow/unfollow button */
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+
+  .follow-unfollow-button {
+    /* the follow/unfollow button */
+    margin: 10px 10px;
+  }

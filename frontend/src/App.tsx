@@ -59,7 +59,7 @@ function App() {
         <Routes>
           <Route path={urlExtension + "/"} element={<Home setLoading={setLoading} apiURL={apiURL} urlExtension={urlExtension} user={user}/>} />
           <Route path={urlExtension + "/home"} element={<Home setLoading={setLoading} apiURL={apiURL} urlExtension={urlExtension} user={user}/>} />
-          <Route path={urlExtension + "/search"} element={<Search />} />
+          <Route path={urlExtension + "/search"} element={<Search urlExtension={urlExtension}/>} />
           <Route path={urlExtension + "/create"} element={<Create urlExtension={urlExtension} setLoading={setLoading} apiURL={apiURL} user={user} setUser={setUser}/>} />
           <Route path={urlExtension + "/admin"} element={<Admin />} />
           <Route path={urlExtension + "/profile"} element={<Profile setLoading={setLoading} apiURL={apiURL} urlExtension={urlExtension} user={user}
