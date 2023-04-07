@@ -1,3 +1,7 @@
 .searchbar {
     padding-bottom: 10px !important;
 }
+
+.pagination {
+    float: right;
+}

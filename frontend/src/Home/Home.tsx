@@ -73,7 +73,7 @@ export default function Home(props: IHomeProps) {
               "You need to log in to see followed posts. Redirecting to login page in 3 seconds.."
             );
             setTimeout(() => {
-              window.location.href = "/login";
+              window.location.href = props.urlExtension + "/login";
             }, 3000);
           } else {
             setSnackbarErrorMessage(
