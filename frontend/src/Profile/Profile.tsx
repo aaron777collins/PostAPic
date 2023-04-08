@@ -58,7 +58,7 @@ export default function Profile(props: IProfileProps) {
   } as UserType);
 
   React.useEffect(() => {
-    if (userinfo.id === "" || userinfo.id === props.user.id) {
+    if (userinfo.id === "" || props.user.id === "" || userinfo.id === props.user.id) {
       setCanFollow(false);
     } else {
       setCanFollow(true);
@@ -641,13 +641,15 @@ export default function Profile(props: IProfileProps) {
                 Follow
               </Button>
             )
-          ) : (
+          ) : props.user.id !== "" ? (
             <>
               This is your account &nbsp;
               <MoodIcon
                 sx={{ display: "inline-flex", mr: 1, verticalAlign: "bottom" }}
               />
             </>
+          ) : (
+            <></>
           )}
         </div>
         <div className="delete-btn">

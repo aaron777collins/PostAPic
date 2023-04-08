@@ -993,8 +993,8 @@ export default function Post(props: IPostProps) {
         </div>
       </div>
       <ConfirmationDialog
-        title="Delete Comment"
-        confirmationDialog="Are you sure you want to delete this comment?"
+        title="Delete Post"
+        confirmationDialog="Are you sure you want to delete this post?"
         confirmButtonText="Delete"
         cancelButtonText="Cancel"
         open={confirmDeleteOpen}

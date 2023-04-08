@@ -55,7 +55,9 @@ export default function UserResult(props: IUserResultProps) {
         // checking if the response has "error" property
         if (!data || data.includes("<br />") || data.includes("error")) {
           // show error message
-          console.error("Checking if the user is following the other user failed");
+          console.error(
+            "Checking if the user is following the other user failed"
+          );
           console.error(data);
           props.setLoading(false);
           if (data.includes("fill in")) {
@@ -89,10 +91,7 @@ export default function UserResult(props: IUserResultProps) {
         props.setSnackbarErrorOpen(true);
       }
     );
-
   }, [props.user.id, props.searcheduser.userid]);
-
-
 
   function followUser() {
     if (props.user.id === props.searcheduser.userid) {
@@ -288,11 +287,13 @@ export default function UserResult(props: IUserResultProps) {
               Follow
             </Button>
           )
-        ) : (
+        ) : props.user.id !== "" ? (
           <>
             This is your account &nbsp;
             <MoodIcon sx={{ mr: 1 }} />
           </>
+        ) : (
+          <></>
         )}
       </div>
     </ListItem>
