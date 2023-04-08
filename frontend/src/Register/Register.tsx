@@ -281,9 +281,9 @@ export default function Register(props: IRegisterProps) {
 
           {/* Link to register page */}
           <Typography>
-            Don't have an account?{" "}
-            <Link href={props.urlExtension + "/register"} underline="hover">
-              Register
+            Already have an account?{" "}
+            <Link href={props.urlExtension + "/login"} underline="hover">
+              Login
             </Link>
           </Typography>
 
