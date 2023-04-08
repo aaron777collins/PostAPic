@@ -1,7 +1,14 @@
 // Post.tsx
 import * as React from "react";
 import "./Post.css";
-import { Button, IconButton, Pagination, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  IconButton,
+  Link,
+  Pagination,
+  TextField,
+  Typography,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { UserType } from "../Types/UserType";
 import { Controller, useForm } from "react-hook-form";
@@ -77,7 +84,6 @@ export default function Post(props: IPostProps) {
       }
     }
   }, [props.user.username, props.author]);
-
 
   const handleImageClick = () => {
     setShowOverlay(true);
@@ -906,7 +912,7 @@ export default function Post(props: IPostProps) {
   return (
     <div className="post-container">
       <div className="post-header">
-      {deletable && (
+        {deletable && (
           <IconButton
             className="delete-button"
             aria-label="delete"
@@ -934,7 +940,14 @@ export default function Post(props: IPostProps) {
         )}
         <div className="post-content">
           <h2 className="post-title">{props.title}</h2>
-          <p className="post-author">{props.author}</p>
+          <p className="post-author">
+            <Link
+              sx={{ textDecoration: "none", color: "black", cursor: "pointer" }}
+              href={props.urlExtension + "/profile/" + props.author}
+            >
+              {props.author}
+            </Link>
+          </p>
           <p className="post-description">{props.description}</p>
         </div>
       </div>

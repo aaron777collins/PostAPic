@@ -1,4 +1,4 @@
-import { Grid, Pagination } from "@mui/material";
+import { Button, Grid, Pagination } from "@mui/material";
 import { UserType } from "../Types/UserType";
 import "./Profile.css";
 
@@ -8,6 +8,7 @@ import SuccessAndFailureSnackbar from "../CustomSnackbar/SuccessAndFailureSnackb
 import { IPostProps } from "../Post/Post";
 import API from "../API";
 import { useParams } from "react-router-dom";
+import MoodIcon from "@mui/icons-material/Mood";
 
 export interface IProfileProps {
   setLoading: (loading: boolean) => void;
@@ -30,6 +31,9 @@ export default function Profile(props: IProfileProps) {
 
   const [refreshPostsNeeded, setRefreshPostsNeeded] = React.useState(false);
 
+  const [canFollow, setCanFollow] = React.useState(false);
+  const [isFollowing, setIsFollowing] = React.useState(false);
+
   const handleSnackbarSuccessClose = () => {
     setSnackbarSuccessOpen(false);
   };
@@ -49,7 +53,225 @@ export default function Profile(props: IProfileProps) {
   } as UserType);
 
   React.useEffect(() => {
+    if (userinfo.id === "" || userinfo.id === props.user.id) {
+      setCanFollow(false);
+    } else {
+      setCanFollow(true);
+    }
+  }, [userinfo.id, props.user.id]);
 
+
+  React.useEffect(() => {
+    if (props.user.id === "" || userinfo.id === "" || props.user.id === userinfo.id) {
+      return;
+    }
+
+    // check if the user is already following the searched user
+    const formData = new FormData();
+    formData.append("userid", props.user.id);
+    formData.append("token", props.user.token);
+    formData.append("useridToCheck", userinfo.id);
+
+    props.setLoading(true);
+
+    API.POST_MULTIPART_FORM_DATA(
+      formData,
+      props.apiURL + "/isFollowingUser.php",
+      (data: any, req: XMLHttpRequest) => {
+        // successful response
+
+        // checking if the response has "error" property
+        if (!data || data.includes("<br />") || data.includes("error")) {
+          // show error message
+          console.error("Checking if the user is following the other user failed");
+          console.error(data);
+          props.setLoading(false);
+          if (data.includes("fill in")) {
+            setSnackbarErrorMessage("Make sure to fill in all fields.");
+          } else if (data.includes("log in")) {
+            props.setLoading(false);
+            return;
+          } else {
+            setSnackbarErrorMessage(
+              "Checking if the user is following the other user failed. Please try again later."
+            );
+          }
+          setCanFollow(false);
+          setSnackbarErrorOpen(true);
+        } else {
+          // success
+          setIsFollowing(JSON.parse(data).isFollowing === true);
+        }
+
+        props.setLoading(false);
+      },
+      (data: any, req: XMLHttpRequest) => {
+        // error
+        setCanFollow(false);
+        console.error("Getting users failed");
+        console.error(data);
+        props.setLoading(false);
+        setSnackbarErrorMessage(
+          "Following the user failed. Please try again later."
+        );
+        setSnackbarErrorOpen(true);
+      }
+    );
+
+  }, [props.user.id, userinfo.id]);
+
+
+  function followUser() {
+    if (props.user.id === userinfo.id) {
+      setSnackbarErrorMessage("You can't follow yourself.");
+      setSnackbarErrorOpen(true);
+      return;
+    }
+    if (props.user.id === "") {
+      setSnackbarErrorMessage(
+        "You need to be logged in to follow a user. Redirecting to login page in 3 seconds.."
+      );
+      setSnackbarErrorOpen(true);
+      setTimeout(() => {
+        window.location.href = props.urlExtension + "/login";
+      }, 3000);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("userid", props.user.id);
+    formData.append("token", props.user.token);
+    formData.append("useridToFollow", userinfo.id);
+    API.POST_MULTIPART_FORM_DATA(
+      formData,
+      props.apiURL + "/followUser.php",
+      (data: any, req: XMLHttpRequest) => {
+        // successful response
+
+        // checking if the response has "error" property
+        if (!data || data.includes("<br />") || data.includes("error")) {
+          // show error message
+          console.error("Following users failed");
+          console.error(data);
+          props.setLoading(false);
+          if (data.includes("fill in")) {
+            setSnackbarErrorMessage("Make sure to fill in all fields.");
+          } else if (data.includes("log in")) {
+            setSnackbarErrorMessage(
+              "You need to be logged in to follow a user. Redirecting to login page in 3 seconds.."
+            );
+            setTimeout(() => {
+              window.location.href = props.urlExtension + "/login";
+            }, 3000);
+          } else if (data.includes("already")) {
+            setSnackbarErrorMessage("You are already following this user.");
+          } else {
+            setSnackbarErrorMessage(
+              "Following the user failed. Please try again later."
+            );
+          }
+          setSnackbarErrorOpen(true);
+        } else {
+          // show success message
+          setSnackbarSuccessMessage(
+            "You are now following " + userinfo.id + "."
+          );
+          setSnackbarSuccessOpen(true);
+          setIsFollowing(true);
+        }
+
+        props.setLoading(false);
+      },
+      (data: any, req: XMLHttpRequest) => {
+        // error
+        setIsFollowing(false);
+        console.error("Getting users failed");
+        console.error(data);
+        props.setLoading(false);
+        setSnackbarErrorMessage(
+          "Following the user failed. Please try again later."
+        );
+        setSnackbarErrorOpen(true);
+      }
+    );
+  }
+
+  function unfollowUser() {
+    if (props.user.id === userinfo.id) {
+      setSnackbarErrorMessage(
+        "You can't unfollow yourself. You never followed yourself in the first place."
+      );
+      setSnackbarErrorOpen(true);
+      return;
+    }
+    if (props.user.id === "") {
+      setSnackbarErrorMessage(
+        "You need to be logged in to unfollow a user. Redirecting to login page in 3 seconds.."
+      );
+      setSnackbarErrorOpen(true);
+      setTimeout(() => {
+        window.location.href = props.urlExtension + "/login";
+      }, 3000);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("userid", props.user.id);
+    formData.append("token", props.user.token);
+    formData.append("useridToUnfollow", userinfo.id);
+    API.POST_MULTIPART_FORM_DATA(
+      formData,
+      props.apiURL + "/unfollowUser.php",
+      (data: any, req: XMLHttpRequest) => {
+        // successful response
+
+        // checking if the response has "error" property
+        if (!data || data.includes("<br />") || data.includes("error")) {
+          // show error message
+          console.error("Unfollowing users failed");
+          console.error(data);
+          props.setLoading(false);
+          if (data.includes("fill in")) {
+            setSnackbarErrorMessage("Make sure to fill in all fields.");
+          } else if (data.includes("log in")) {
+            setSnackbarErrorMessage(
+              "You need to be logged in to unfollow a user. Redirecting to login page in 3 seconds.."
+            );
+            setTimeout(() => {
+              window.location.href = props.urlExtension + "/login";
+            }, 3000);
+          } else if (data.includes("already")) {
+            setSnackbarErrorMessage("You are already unfollowing this user.");
+          } else {
+            setSnackbarErrorMessage(
+              "Unfollowing the user failed. Please try again later."
+            );
+          }
+          setSnackbarErrorOpen(true);
+        } else {
+          // show success message
+          setSnackbarSuccessMessage("You are now unfollowing " + userinfo.id);
+          setSnackbarSuccessOpen(true);
+          setIsFollowing(false);
+        }
+
+        props.setLoading(false);
+      },
+      (data: any, req: XMLHttpRequest) => {
+        // error
+        setIsFollowing(true);
+        console.error("Getting users failed");
+        console.error(data);
+        props.setLoading(false);
+        setSnackbarErrorMessage(
+          "Following the user failed. Please try again later."
+        );
+        setSnackbarErrorOpen(true);
+      }
+    );
+  }
+
+  React.useEffect(() => {
     props.setLoading(true);
 
     if (username === undefined || username === "") {
@@ -269,6 +491,38 @@ export default function Profile(props: IProfileProps) {
         <div className="username">{userinfo.username}</div>
         <div className="name">
           {userinfo.firstName} {userinfo.lastName}
+        </div>
+        <div className="follow-button">
+          {canFollow ? (
+            isFollowing ? (
+              <Button
+                variant="contained"
+                color="secondary"
+                size="small"
+                className="follow-unfollow-button"
+                sx={{ ml: 1 }}
+                onClick={() => unfollowUser}
+              >
+                Unfollow
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                className="follow-unfollow-button"
+                sx={{ ml: 1 }}
+                onClick={() => followUser}
+              >
+                Follow
+              </Button>
+            )
+          ) : (
+            <>
+              This is your account &nbsp;
+              <MoodIcon sx={{ display: "inline-flex", mr: 1, verticalAlign: "bottom"}} />
+            </>
+          )}
         </div>
       </div>
       <div className="post-list-container">
