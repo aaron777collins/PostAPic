@@ -131,6 +131,7 @@ export default function Register(props: IRegisterProps) {
               "Registration failed: Please try again later."
             );
             setSnackbarErrorOpen(true);
+            props.setLoading(false);
         } else {
 
             if (data.includes("already exists")) {
@@ -140,6 +141,7 @@ export default function Register(props: IRegisterProps) {
                 "Registration failed: Username or email already exists."
               );
               setSnackbarErrorOpen(true);
+              props.setLoading(false);
               return;
             }
 
@@ -150,6 +152,7 @@ export default function Register(props: IRegisterProps) {
                 "Registration failed: Please fill in all fields."
               );
               setSnackbarErrorOpen(true);
+              props.setLoading(false);
               return;
             }
 
@@ -160,6 +163,7 @@ export default function Register(props: IRegisterProps) {
                 "Registration failed: Please try again later."
               );
               setSnackbarErrorOpen(true);
+              props.setLoading(false);
               return;
             }
 
@@ -172,6 +176,7 @@ export default function Register(props: IRegisterProps) {
               // redirect to login page
               document.location.href = props.urlExtension + "/login";
             }, 3000);
+            props.setLoading(false);
 
         }
 

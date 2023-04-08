@@ -61,10 +61,10 @@ function App() {
           <Route path={urlExtension + "/home"} element={<Home setLoading={setLoading} apiURL={apiURL} urlExtension={urlExtension} user={user}/>} />
           <Route path={urlExtension + "/search"} element={<Search urlExtension={urlExtension} setLoading={setLoading} apiURL={apiURL} user={user}/>} />
           <Route path={urlExtension + "/create"} element={<Create urlExtension={urlExtension} setLoading={setLoading} apiURL={apiURL} user={user} setUser={setUser}/>} />
-          <Route path={urlExtension + "/admin"} element={<Admin />} />
-          <Route path={urlExtension + "/profile"} element={<Profile setLoading={setLoading} apiURL={apiURL} urlExtension={urlExtension} user={user}
+          <Route path={urlExtension + "/admin"} element={<Admin urlExtension={urlExtension} setLoading={setLoading} apiURL={apiURL} user={user}/>} />
+          <Route path={urlExtension + "/profile"} element={<Profile setLoading={setLoading} apiURL={apiURL} urlExtension={urlExtension} user={user} setUser={setUser}
           />} />
-          <Route path={urlExtension + "/profile/:username"} element={<Profile setLoading={setLoading} apiURL={apiURL} urlExtension={urlExtension} user={user}
+          <Route path={urlExtension + "/profile/:username"} element={<Profile setLoading={setLoading} apiURL={apiURL} urlExtension={urlExtension} user={user} setUser={setUser}
           />} />
           <Route
             path={urlExtension + "/login"}

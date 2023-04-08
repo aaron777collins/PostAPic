@@ -9,12 +9,14 @@ import { IPostProps } from "../Post/Post";
 import API from "../API";
 import { useParams } from "react-router-dom";
 import MoodIcon from "@mui/icons-material/Mood";
+import ConfirmationDialog from "../ConfirmationDialog/ConfirmationDialog";
 
 export interface IProfileProps {
   setLoading: (loading: boolean) => void;
   apiURL: string;
   urlExtension: string;
   user: UserType;
+  setUser: (user: UserType) => void;
 }
 
 export default function Profile(props: IProfileProps) {
@@ -33,6 +35,9 @@ export default function Profile(props: IProfileProps) {
 
   const [canFollow, setCanFollow] = React.useState(false);
   const [isFollowing, setIsFollowing] = React.useState(false);
+
+  const [canDelete, setCanDelete] = React.useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
 
   const handleSnackbarSuccessClose = () => {
     setSnackbarSuccessOpen(false);
@@ -60,9 +65,12 @@ export default function Profile(props: IProfileProps) {
     }
   }, [userinfo.id, props.user.id]);
 
-
   React.useEffect(() => {
-    if (props.user.id === "" || userinfo.id === "" || props.user.id === userinfo.id) {
+    if (
+      props.user.id === "" ||
+      userinfo.id === "" ||
+      props.user.id === userinfo.id
+    ) {
       return;
     }
 
@@ -83,7 +91,9 @@ export default function Profile(props: IProfileProps) {
         // checking if the response has "error" property
         if (!data || data.includes("<br />") || data.includes("error")) {
           // show error message
-          console.error("Checking if the user is following the other user failed");
+          console.error(
+            "Checking if the user is following the other user failed"
+          );
           console.error(data);
           props.setLoading(false);
           if (data.includes("fill in")) {
@@ -117,9 +127,7 @@ export default function Profile(props: IProfileProps) {
         setSnackbarErrorOpen(true);
       }
     );
-
   }, [props.user.id, userinfo.id]);
-
 
   function followUser() {
     if (props.user.id === userinfo.id) {
@@ -132,6 +140,7 @@ export default function Profile(props: IProfileProps) {
         "You need to be logged in to follow a user. Redirecting to login page in 3 seconds.."
       );
       setSnackbarErrorOpen(true);
+      localStorage.removeItem("userinfo");
       setTimeout(() => {
         window.location.href = props.urlExtension + "/login";
       }, 3000);
@@ -160,6 +169,7 @@ export default function Profile(props: IProfileProps) {
             setSnackbarErrorMessage(
               "You need to be logged in to follow a user. Redirecting to login page in 3 seconds.."
             );
+            localStorage.removeItem("userinfo");
             setTimeout(() => {
               window.location.href = props.urlExtension + "/login";
             }, 3000);
@@ -208,6 +218,7 @@ export default function Profile(props: IProfileProps) {
       setSnackbarErrorMessage(
         "You need to be logged in to unfollow a user. Redirecting to login page in 3 seconds.."
       );
+      localStorage.removeItem("userinfo");
       setSnackbarErrorOpen(true);
       setTimeout(() => {
         window.location.href = props.urlExtension + "/login";
@@ -237,6 +248,7 @@ export default function Profile(props: IProfileProps) {
             setSnackbarErrorMessage(
               "You need to be logged in to unfollow a user. Redirecting to login page in 3 seconds.."
             );
+            localStorage.removeItem("userinfo");
             setTimeout(() => {
               window.location.href = props.urlExtension + "/login";
             }, 3000);
@@ -265,6 +277,115 @@ export default function Profile(props: IProfileProps) {
         props.setLoading(false);
         setSnackbarErrorMessage(
           "Following the user failed. Please try again later."
+        );
+        setSnackbarErrorOpen(true);
+      }
+    );
+  }
+
+  // check if the user can be deleted
+  React.useEffect(() => {
+    if (props.user.id !== userinfo.id && props.user.username !== "admin") {
+      setCanDelete(false);
+    } else {
+      setCanDelete(true);
+    }
+  }, [props.user, userinfo]);
+
+  function deleteUser() {
+    if (props.user.id !== userinfo.id && props.user.username !== "admin") {
+      setSnackbarErrorMessage(
+        "You can't delete other users. You can only delete your own account."
+      );
+      setSnackbarErrorOpen(true);
+      return;
+    }
+    if (props.user.id === "") {
+      setSnackbarErrorMessage(
+        "You need to be logged in to delete a user. Redirecting to login page in 3 seconds.."
+      );
+      localStorage.removeItem("userinfo");
+      setSnackbarErrorOpen(true);
+      setTimeout(() => {
+        window.location.href = props.urlExtension + "/login";
+      }, 3000);
+      return;
+    }
+
+    props.setLoading(true);
+
+    const formData = new FormData();
+    formData.append("userid", props.user.id);
+    formData.append("token", props.user.token);
+    formData.append("useridToDelete", userinfo.id);
+    API.POST_MULTIPART_FORM_DATA(
+      formData,
+      props.apiURL + "/deleteUser.php",
+      (data: any, req: XMLHttpRequest) => {
+        // successful response
+
+        // checking if the response has "error" property
+        if (!data || data.includes("<br />") || data.includes("error")) {
+          // show error message
+          console.error("deleting user failed");
+          console.error(data);
+          props.setLoading(false);
+          if (data.includes("fill in")) {
+            setSnackbarErrorMessage("Make sure to fill in all fields.");
+          } else if (data.includes("log in")) {
+            setSnackbarErrorMessage(
+              "You need to be logged in to delete a user. Redirecting to login page in 3 seconds.."
+            );
+            localStorage.removeItem("userinfo");
+            setTimeout(() => {
+              window.location.href = props.urlExtension + "/login";
+            }, 3000);
+          } else if (data.includes("permission")) {
+            setSnackbarErrorMessage("You don't have permission to do that.");
+          } else {
+            setSnackbarErrorMessage(
+              "Deleting the user failed. Please try again later."
+            );
+          }
+          setSnackbarErrorOpen(true);
+        } else {
+          // show success message
+          setSnackbarSuccessMessage(
+            "You deleted " +
+              userinfo.username +
+              ". Redirecting to home page in 3 seconds.."
+          );
+          setSnackbarSuccessOpen(true);
+
+          // log out the user if they aren't admin
+          console.log(props.user.username);
+          if (props.user.username !== "admin") {
+            props.setUser({
+              id: "",
+              username: "",
+              firstName: "",
+              lastName: "",
+              token: "",
+              tokenExpiration: 0,
+            } as UserType);
+            localStorage.removeItem("userinfo");
+          }
+          setTimeout(() => {
+            window.location.href = props.urlExtension + "/home";
+          }, 3000);
+
+        }
+
+        props.setLoading(false);
+      },
+      (data: any, req: XMLHttpRequest) => {
+        // error
+        setIsFollowing(true);
+        console.error("Deleting user failed");
+        console.error(data);
+        props.setLoading(false);
+        setSnackbarErrorMessage(
+          "Deleting the user failed. Please try again later."
         );
         setSnackbarErrorOpen(true);
       }
@@ -371,13 +492,14 @@ export default function Profile(props: IProfileProps) {
           props.setLoading(false);
           if (data.includes("No posts found")) {
             setNumPosts(0);
-            setSnackbarErrorMessage("No posts found");
+            setSnackbarSuccessMessage("No posts found.");
+            setSnackbarSuccessOpen(true);
           } else {
             setSnackbarErrorMessage(
               "Getting the number of posts failed. Please try again later."
             );
+            setSnackbarErrorOpen(true);
           }
-          setSnackbarErrorOpen(true);
         } else {
           // login successful
           const jsonData = JSON.parse(data);
@@ -432,13 +554,15 @@ export default function Profile(props: IProfileProps) {
           props.setLoading(false);
 
           if (data.includes("No posts found")) {
-            setSnackbarErrorMessage("No posts found");
+            setPosts([]);
+            setSnackbarSuccessMessage("No posts found");
+            setSnackbarSuccessOpen(true);
           } else {
             setSnackbarErrorMessage(
               "Getting the posts failed. Please try again later."
             );
+            setSnackbarErrorOpen(true);
           }
-          setSnackbarErrorOpen(true);
         } else {
           const jsonData = JSON.parse(data);
           // console.log(jsonData);
@@ -520,7 +644,35 @@ export default function Profile(props: IProfileProps) {
           ) : (
             <>
               This is your account &nbsp;
-              <MoodIcon sx={{ display: "inline-flex", mr: 1, verticalAlign: "bottom"}} />
+              <MoodIcon
+                sx={{ display: "inline-flex", mr: 1, verticalAlign: "bottom" }}
+              />
+            </>
+          )}
+        </div>
+        <div className="delete-btn">
+          {canDelete ? (
+            <Button
+              variant="contained"
+              color="error"
+              size="small"
+              className="follow-unfollow-button"
+              sx={{ ml: 1 }}
+              onClick={() => setConfirmDeleteOpen(true)}
+            >
+              Delete
+            </Button>
+          ) : props.user.id === userinfo.id ? (
+            <>
+              This is your account.. strange how we got here.. You should be able to delete your account. Contact admin &nbsp;
+              <MoodIcon
+                sx={{ display: "inline-flex", mr: 1, verticalAlign: "bottom" }}
+              />
+            </>
+          ) :
+          (
+            <>
+              {/* can't delete another account */}
             </>
           )}
         </div>
@@ -563,6 +715,15 @@ export default function Profile(props: IProfileProps) {
         snackbarErrorOpen={snackbarErrorOpen}
         handleSnackbarErrorClose={handleSnackbarErrorClose}
         snackbarErrorMessage={snackbarErrorMessage}
+      />
+      <ConfirmationDialog
+        title="Delete Account"
+        confirmationDialog="Are you sure you want to delete this account?"
+        confirmButtonText="Delete"
+        cancelButtonText="Cancel"
+        open={confirmDeleteOpen}
+        setOpen={setConfirmDeleteOpen}
+        onConfirm={deleteUser}
       />
     </div>
   );

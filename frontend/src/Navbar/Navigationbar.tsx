@@ -35,7 +35,6 @@ import IconButtonOrLoginButton from "./IconButtonOrLoginButton/IconButtonOrLogin
 // Profile
 // Login
 
-const pagesWithLinks = ["Home", "Search", "Create"];
 const settingsPages = ["Profile", "Logout"];
 
 interface NavigationbarProps {
@@ -45,6 +44,9 @@ interface NavigationbarProps {
 }
 
 function Navigationbar(props: NavigationbarProps) {
+
+  const [pagesWithLinks, setPagesWithLinks] = React.useState<string[]>(["Home", "Search", "Create"]);
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -66,6 +68,15 @@ function Navigationbar(props: NavigationbarProps) {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  React.useEffect(() => {
+    if (props.user.username === "admin") {
+      setPagesWithLinks(pagesWithLinks.concat("Admin"));
+    } else {
+      setPagesWithLinks(pagesWithLinks.filter((page) => page !== "Admin"));
+    }
+  }, [props.user.id, props.user.username]);
+
 
   return (
     <AppBar position="static" sx={{ backgroundColor: "#25283D" }}>

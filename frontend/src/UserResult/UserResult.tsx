@@ -104,6 +104,7 @@ export default function UserResult(props: IUserResultProps) {
       props.setSnackbarErrorMessage(
         "You need to be logged in to follow a user. Redirecting to login page in 3 seconds.."
       );
+      localStorage.removeItem("userinfo");
       props.setSnackbarErrorOpen(true);
       setTimeout(() => {
         window.location.href = props.urlExtension + "/login";
@@ -133,6 +134,7 @@ export default function UserResult(props: IUserResultProps) {
             props.setSnackbarErrorMessage(
               "You need to be logged in to follow a user. Redirecting to login page in 3 seconds.."
             );
+            localStorage.removeItem("userinfo");
             setTimeout(() => {
               window.location.href = props.urlExtension + "/login";
             }, 3000);
@@ -183,6 +185,7 @@ export default function UserResult(props: IUserResultProps) {
       props.setSnackbarErrorMessage(
         "You need to be logged in to unfollow a user. Redirecting to login page in 3 seconds.."
       );
+      localStorage.removeItem("userinfo");
       props.setSnackbarErrorOpen(true);
       setTimeout(() => {
         window.location.href = props.urlExtension + "/login";
@@ -212,6 +215,7 @@ export default function UserResult(props: IUserResultProps) {
             props.setSnackbarErrorMessage(
               "You need to be logged in to unfollow a user. Redirecting to login page in 3 seconds.."
             );
+            localStorage.removeItem("userinfo");
             setTimeout(() => {
               window.location.href = props.urlExtension + "/login";
             }, 3000);

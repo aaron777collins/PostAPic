@@ -62,7 +62,7 @@
             "error" => "Username or email already exists"
         );
         echo json_encode($response);
-
+        return;
     }
 
     // now we can create a user with these details
@@ -79,6 +79,7 @@
             "success" => "User created"
         );
         echo json_encode($response);
+        return;
 
     } else {
 
@@ -87,6 +88,7 @@
             "error" => "Error creating user"
         );
         echo json_encode($response);
+        return;
 
     }
 
