@@ -8,6 +8,8 @@ project is run.
 
 *Note: On your first run, you should navigate to [http://localhost:8080/createtables.php](http://localhost:8080/createtables.php) to initialize your tables.*
 
+*(On your first run, don't forget to copy the '.env copy' and '.env example' files to be a '.env' file in their respective directories)*
+
 Optionally, you can run `npm run build` to build a production version of the frontend. You can serve the `build/` directory within frontend to run a production frontend (Ex. `npx serve -s build`). However, you may want to adjust the default address in app, etc. if you aren't serving on the UWindsor server.
 
 ## Testing
