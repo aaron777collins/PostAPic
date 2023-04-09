@@ -13,3 +13,5 @@ mode for the tests to complete properly.
 *Note: You may
 also need to edit your Selenium settings to allow
 file uploads/urls*.
+
+*ALSO: On your first run, you should navigate to [http://localhost:8080/createtables.php](http://localhost:8080/createtables.php) to initialize your tables.*

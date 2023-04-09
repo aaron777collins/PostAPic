@@ -6,6 +6,8 @@ A small website using php for the backend and react for the frontend
 Run `docker-compose up -d` in the base directory to run the backend. Use `cd frontend` in another terminal to go to the frontend directory and then run `npm start` for a frontend dev server. You will need to run `npm install` the first time this
 project is run.
 
+*Note: On your first run, you should navigate to [http://localhost:8080/createtables.php](http://localhost:8080/createtables.php) to initialize your tables.*
+
 Optionally, you can run `npm run build` to build a production version of the frontend. You can serve the `build/` directory within frontend to run a production frontend (Ex. `npx serve -s build`). However, you may want to adjust the default address in app, etc. if you aren't serving on the UWindsor server.
 
 ## Testing
