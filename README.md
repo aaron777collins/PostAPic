@@ -3,7 +3,7 @@ A small website using php for the backend and react for the frontend
 [Link to Website](https://colli11s.myweb.cs.uwindsor.ca/COMP-2707-W23/project/frontend/build/)
 
 ## Running The Project
-Run `docker-compose up -d` in the base directory to run the backend. Use `cd frontend` in another terminal to go to the frontend directory and then run `npm start` for a frontend dev server. You will need to run `npm install` the first time this
+Run `docker-compose up -d` in the base directory to run the backend (run `docker-compose build` before your first run). Use `cd frontend` in another terminal to go to the frontend directory and then run `npm start` for a frontend dev server. You will need to run `npm install` the first time this
 project is run.
 
 *Note: On your first run, you should navigate to [http://localhost:8080/createtables.php](http://localhost:8080/createtables.php) to initialize your tables.*
