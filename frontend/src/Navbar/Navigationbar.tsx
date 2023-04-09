@@ -139,6 +139,7 @@ function Navigationbar(props: NavigationbarProps) {
                       component={Link}
                       to={props.urlExtension + "/" + page.toLowerCase()}
                       sx={{textTransform: "none"}}
+                      id={page + "-btn-navbar"}
                       >
                       {page}
                     </Button>
@@ -168,6 +169,7 @@ function Navigationbar(props: NavigationbarProps) {
             {pagesWithLinks.map((page) => (
               <Button
                 key={page}
+                id={page + "-btn-navbar2"}
                 onClick={() => {
                   // go to page
                   document.location.href =

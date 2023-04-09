@@ -272,6 +272,7 @@ export default function UserResult(props: IUserResultProps) {
               className="follow-unfollow-button"
               sx={{ ml: 1 }}
               onClick={unfollowUser}
+              id={"unfollow-button-" + props.searcheduser.username}
             >
               Unfollow
             </Button>
@@ -280,9 +281,10 @@ export default function UserResult(props: IUserResultProps) {
               variant="contained"
               color="primary"
               size="small"
-              className="follow-unfollow-button"
+              className="follow-follow-button"
               sx={{ ml: 1 }}
               onClick={followUser}
+              id={"follow-button-" + props.searcheduser.username}
             >
               Follow
             </Button>

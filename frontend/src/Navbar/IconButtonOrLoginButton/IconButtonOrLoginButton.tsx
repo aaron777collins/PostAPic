@@ -110,6 +110,7 @@ export default function IconButtonOrLoginButton(
                         localStorage.removeItem("userinfo");
                       }}
                       component={Link}
+                      id={page + "-btn-navbar3"}
                       to={props.urlExtension + "/"}
                       sx={{textTransform: "none"}}
                       >

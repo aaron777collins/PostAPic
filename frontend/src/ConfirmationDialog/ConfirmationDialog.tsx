@@ -47,10 +47,10 @@ export default function ConfirmationDialog(props: IConfirmationDialogProps) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>
+          <Button onClick={handleClose} id="ask-cancel-btn">
             {props.cancelButtonText ? props.cancelButtonText : "Cancel"}
           </Button>
-          <Button onClick={handleConfirm} autoFocus>
+          <Button onClick={handleConfirm} autoFocus id="ask-confirm-btn">
             {props.confirmButtonText ? props.confirmButtonText : "Confirm"}
           </Button>
         </DialogActions>
